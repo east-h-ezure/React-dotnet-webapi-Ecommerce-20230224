@@ -1,33 +1,40 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
+import { Product } from './product';
+import Catalog from './features/catalog/Catalog';
+import { Typography } from '@mui/material';
 
 const App = () => {
-  const [ products, setProducts ] = useState(
-    [
-      {name: '走れメロス', price: 1500},
-      {name: '罪と罰', price: 1000},
-      {name: 'チーズはどこに消えた？', price: 1600}
-    ]
-  )
-  const addProducts = () => {
-    setProducts([...products, { name: '七つの習慣', price: 2000 }])
-  }
+  const [products, setProducts] = useState<Product[]>([]);
 
+  useEffect(() => {
+    try {
+      fetch('https://localhost:5000/api/products', { mode: "cors" })
+        .then(response => response.json())
+        .then(data => setProducts(data));
+    } catch (error) {
+      console.error(error); // エラーが発生した行を特定するために、コンソールにエラーを出力する
+    }
+  }, []);
+
+  const addProduct = () => {
+    setProducts(prevState => [...prevState,
+      {
+        id: prevState.length + 101,
+        name: '書籍' + (prevState.length + 1),
+        price: (prevState.length * 100) + 100,
+        brand: '村上春樹',
+        description: 'なんかの本',
+        pictureUrl: 'http://picsum.photos/200'
+      }] as Product[])
+  }
 
   return (
     <div>
-      <h1>本の森</h1>
-      <ul>
-        {
-          products.map((product) => (
-            <li>
-              {product.name} - {product.price}円
-            </li>
-          ))
-        }
-      </ul>
-      <button onClick={addProducts}>商品の追加</button>
+      <Typography variant='h2'>本の森</Typography>
+      <Catalog products={products} addProduct={addProduct} />
     </div>
-  )
+  );
 }
+
 export default App;
