@@ -31,7 +31,7 @@ const App = () => {
 
   return (
     <div>
-      <Typography variant='h2'>本の森</Typography>
+      <Typography variant='h2'>本の海</Typography>
       <Catalog products={products} addProduct={addProduct} />
     </div>
   );
