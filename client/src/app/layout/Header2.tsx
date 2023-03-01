@@ -11,6 +11,8 @@ import {
   ListItemText,
   Divider,
   Switch,
+  Box,
+  Badge,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
@@ -18,6 +20,7 @@ import MailIcon from '@mui/icons-material/Mail';
 import { styled } from '@mui/material/styles';
 import { CSSObject } from '@mui/system';
 import { Link } from 'react-router-dom';
+import { ShoppingCart } from '@mui/icons-material';
 
 // スタイルの定義
 const drawerWidth = 240;
@@ -38,8 +41,13 @@ const drawerStyles = (theme: any): CSSObject => ({
 const ContentContainer = styled('div')({
   flexGrow: 1,
   padding: '20px',
-  height: '50px',
+  height: '100px',
 });
+const rightLinks = [
+  { title: 'LOGIN', path: '/login' },
+  { title: '登録', path: '/register' },
+];
+
 interface Props {
   darkMode: boolean;
   handleThemeChange: () => void;
@@ -51,10 +59,21 @@ const Header = ({ handleThemeChange, darkMode }: Props) => {
   const handleDrawerToggle = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
+  const rightMenu = {
+    color: 'inherit',
+    textDecoration: 'none',
+    typography: 'subtitle1',
+    '&:hover': {
+      color: 'grey.500',
+    },
+    '&.active': {
+      color: 'text.secondary',
+    },
+  };
 
   return (
     <AppContainer>
-      <AppBar position="static">
+      <AppBar position="static" sx={{ height: '70px' }}>
         <Toolbar>
           <IconButton
             color="inherit"
@@ -67,11 +86,22 @@ const Header = ({ handleThemeChange, darkMode }: Props) => {
           <Typography sx={{ ml: 3 }} variant="h5" noWrap>
             本の森
           </Typography>
-          <Switch
-            sx={{ ml: 6 }}
-            checked={darkMode}
-            onChange={handleThemeChange}
-          />
+          <Switch checked={darkMode} onChange={handleThemeChange} />
+          <div style={{ flexGrow: 1 }}></div>
+          <Box sx={{ display: 'flex' }}>
+            <IconButton size="large" edge="start" color="inherit">
+              <Badge badgeContent="4" color="secondary">
+                <ShoppingCart />
+              </Badge>
+            </IconButton>
+            <List sx={{ display: 'flex' }}>
+              {rightLinks.map(({ title, path }) => (
+                <ListItem key={path} sx={rightMenu}>
+                  {title.toUpperCase()}
+                </ListItem>
+              ))}
+            </List>
+          </Box>
         </Toolbar>
       </AppBar>
       <Drawer

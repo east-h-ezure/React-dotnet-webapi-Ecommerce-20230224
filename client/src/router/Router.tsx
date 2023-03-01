@@ -10,6 +10,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import App from '../App';
 import Header2 from '../app/layout/Header2';
 import HomePage from '../features/home/HomePage';
+import Header from '../app/layout/Header';
 
 const Router = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -28,7 +29,7 @@ const Router = () => {
       <CssBaseline />
       <Container maxWidth={false}>
         <BrowserRouter>
-          {/* <App /> */}
+          {/* <Header darkMode={darkMode} handleThemeChange={handleThemeChange} /> */}
           <Header2 darkMode={darkMode} handleThemeChange={handleThemeChange} />
           <Routes>
             <Route path="/" element={<App />} />
