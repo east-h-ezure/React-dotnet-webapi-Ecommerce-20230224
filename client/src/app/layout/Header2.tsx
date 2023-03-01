@@ -61,7 +61,6 @@ const Header = ({ handleThemeChange, darkMode }: Props) => {
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 0 }}
           >
             <MenuIcon />
           </IconButton>

@@ -24,17 +24,21 @@ const Router = () => {
     setDarkMode(!darkMode);
   };
   return (
-    <>
-      <BrowserRouter>
-        {/* <App /> */}
-        <Routes>
-          <Route path="/" element={<App />} />
-          <Route path="/contact" element={<Contact />} />
-          {/* {/* <Route path="/catalog" element={<About />} /> */}
-          <Route path="/home" element={<HomePage />} />
-        </Routes>
-      </BrowserRouter>
-    </>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Container maxWidth={false}>
+        <BrowserRouter>
+          {/* <App /> */}
+          <Header2 darkMode={darkMode} handleThemeChange={handleThemeChange} />
+          <Routes>
+            <Route path="/" element={<App />} />
+            <Route path="/contact" element={<Contact />} />
+            {/* {/* <Route path="/catalog" element={<About />} /> */}
+            <Route path="/home" element={<HomePage />} />
+          </Routes>
+        </BrowserRouter>
+      </Container>
+    </ThemeProvider>
   );
 };
 

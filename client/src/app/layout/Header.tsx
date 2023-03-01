@@ -42,7 +42,7 @@ interface Props {
 
 export default function Header({ handleThemeChange, darkMode }: Props) {
   return (
-    <AppBar position="static" sx={{ mb: 4 }}>
+    <AppBar position="static">
       <Toolbar
         sx={{
           display: 'flex',
@@ -66,7 +66,7 @@ export default function Header({ handleThemeChange, darkMode }: Props) {
         </List>
 
         <Box display="flex" alignItems="center">
-          <IconButton size="large" edge="start" color="inherit" sx={{ mr: 2 }}>
+          <IconButton size="large" edge="start" color="inherit">
             <Badge badgeContent="4" color="secondary">
               <ShoppingCart />
             </Badge>

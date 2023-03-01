@@ -24,14 +24,15 @@ const App = () => {
     setDarkMode(!darkMode);
   };
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Header2 darkMode={darkMode} handleThemeChange={handleThemeChange} />
-      {/* <Header2 /> */}
-      <Container>
-        <Catalog />
-      </Container>
-    </ThemeProvider>
+    // <ThemeProvider theme={theme}>
+    //   <CssBaseline />
+    //   <Header2 darkMode={darkMode} handleThemeChange={handleThemeChange} />
+    //   <Container>
+    <div>
+      <Catalog />
+    </div>
+    // </Container>
+    // </ThemeProvider>
   );
 };
 
