@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import { Product } from './product';
 import Catalog from './features/catalog/Catalog';
-import { Typography } from '@mui/material';
+import Header from './app/layout/Header';
+import { Container, CssBaseline } from '@mui/material';
 
 const App = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -31,8 +32,11 @@ const App = () => {
 
   return (
     <div>
-      <Typography variant='h2'>本の海</Typography>
-      <Catalog products={products} addProduct={addProduct} />
+      <CssBaseline />
+      <Header />
+      <Container>
+        <Catalog products={products} addProduct={addProduct} />
+      </Container>
     </div>
   );
 }
