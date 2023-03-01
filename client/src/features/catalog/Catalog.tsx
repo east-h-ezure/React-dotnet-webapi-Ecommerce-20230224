@@ -1,20 +1,26 @@
-import { Product } from '../../product'
-import {
-  Button
-} from '@mui/material'
+import { Product } from '../../product';
+import { Button } from '@mui/material';
 import ProductList from './ProductList';
+import { useEffect, useState } from 'react';
 
-interface Props {
-  products: Product[];
-  addProduct: () => void;
-}
-const Catalog = ({products, addProduct}: Props) => {
+const Catalog = () => {
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    try {
+      fetch('https://localhost:5000/api/products', { mode: 'cors' })
+        .then((response) => response.json())
+        .then((data) => setProducts(data));
+    } catch (error) {
+      console.error(error); // エラーが発生した行を特定するために、コンソールにエラーを出力する
+    }
+  }, []);
+
   return (
     <div>
       <ProductList products={products} />
-      <Button onClick={addProduct}>商品の追加</Button>
     </div>
-  )
-}
+  );
+};
 
 export default Catalog;
