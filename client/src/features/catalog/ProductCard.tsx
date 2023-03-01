@@ -33,7 +33,7 @@ const ProductCard = ({ product }: Props) => {
       <Card sx={{ maxWidth: 345, flexWrap: 'wrap' }}>
         {/* <CardHeader title={product.name} /> */}
         <CardMedia
-          sx={{ height: 140, backgroundSize: 'contain', bgcolor: 'white' }}
+          sx={{ height: 140, backgroundSize: 'contain', bgcolor: '#f5f5f5' }}
           image={product.pictureUrl}
           title={product.pictureUrl}
         />
