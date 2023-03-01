@@ -1,17 +1,14 @@
-import './App.css';
-import { Product } from './product';
-import Catalog from './features/catalog/Catalog';
-import Header from './app/layout/Header';
 import {
   Container,
   createTheme,
   CssBaseline,
   ThemeProvider,
+  Typography,
 } from '@mui/material';
-import { useState } from 'react';
-import Header2 from './app/layout/Header2';
+import React, { useState } from 'react';
+import Header2 from '../../app/layout/Header2';
 
-const App = () => {
+const HomePage = () => {
   const [darkMode, setDarkMode] = useState(false);
   const paletteType = darkMode ? 'dark' : 'light';
   const theme = createTheme({
@@ -29,10 +26,10 @@ const App = () => {
       <Header2 darkMode={darkMode} handleThemeChange={handleThemeChange} />
       {/* <Header2 /> */}
       <Container>
-        <Catalog />
+        <Typography>ホーム</Typography>
       </Container>
     </ThemeProvider>
   );
 };
 
-export default App;
+export default HomePage;

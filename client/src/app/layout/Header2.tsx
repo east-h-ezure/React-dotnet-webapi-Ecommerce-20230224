@@ -17,6 +17,7 @@ import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import { styled } from '@mui/material/styles';
 import { CSSObject } from '@mui/system';
+import { Link } from 'react-router-dom';
 
 // スタイルの定義
 const drawerWidth = 240;
@@ -84,14 +85,27 @@ const Header = ({ handleThemeChange, darkMode }: Props) => {
         <Toolbar />
         <Divider />
         <List>
-          {['トップ', '商品', '検索', '問合せ'].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
+          <ListItem>
+            <ListItemIcon>
+              <InboxIcon />
+              <Link to="/">メニュー</Link>
+            </ListItemIcon>
+            <ListItemText />
+          </ListItem>
+          <ListItem>
+            <ListItemIcon>
+              <InboxIcon />
+              <Link to="/home">Home</Link>
+            </ListItemIcon>
+            <ListItemText />
+          </ListItem>
+          <ListItem>
+            <ListItemIcon>
+              <InboxIcon />
+              <Link to="/contact">問合せ</Link>
+            </ListItemIcon>
+            <ListItemText />
+          </ListItem>
         </List>
       </Drawer>
     </AppContainer>
