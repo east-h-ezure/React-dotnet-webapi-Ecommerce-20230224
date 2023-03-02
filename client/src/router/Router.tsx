@@ -10,7 +10,8 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import App from '../App';
 import Header2 from '../app/layout/Header2';
 import HomePage from '../features/home/HomePage';
-import Header from '../app/layout/Header';
+// import Header from '../app/layout/Header';
+import ProductDetails from '../features/catalog/ProductDetails';
 
 const Router = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -34,7 +35,7 @@ const Router = () => {
           <Routes>
             <Route path="/" element={<App />} />
             <Route path="/contact" element={<Contact />} />
-            {/* {/* <Route path="/catalog" element={<About />} /> */}
+            <Route path="/catalog/:id" element={<ProductDetails />} />
             <Route path="/home" element={<HomePage />} />
           </Routes>
         </BrowserRouter>

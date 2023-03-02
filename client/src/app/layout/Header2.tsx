@@ -74,7 +74,13 @@ const Header = ({ handleThemeChange, darkMode }: Props) => {
   return (
     <AppContainer>
       <AppBar position="static" sx={{ height: '70px' }}>
-        <Toolbar>
+        <Toolbar
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
           <IconButton
             color="inherit"
             aria-label="open drawer"

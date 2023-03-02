@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import { fontWeight } from '@mui/system';
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Product } from '../../product';
 
 interface Props {
@@ -59,7 +60,9 @@ const ProductCard = ({ product }: Props) => {
         </CardContent>
         <CardActions>
           <Button size="small">カートに追加</Button>
-          <Button size="small">詳細</Button>
+          <Button component={Link} to={`/catalog/${product.id}`} size="small">
+            詳細
+          </Button>
         </CardActions>
       </Card>
     </div>
