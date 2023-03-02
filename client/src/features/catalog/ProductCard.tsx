@@ -13,35 +13,41 @@ import {
 } from '@mui/material';
 import { fontWeight } from '@mui/system';
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 import { Product } from '../../product';
+import { styled } from '@mui/system';
 
 interface Props {
   product: Product;
 }
 
+const StyledLink = styled(RouterLink)`
+  text-decoration: none;
+  color: black;
+  &:hover {
+    border: none;
+    color: darkgray;
+  }
+`;
+
 const ProductCard = ({ product }: Props) => {
   return (
     <div>
-      {/* <ListItem key={product.id}>
-            <ListItemAvatar>
-              <Avatar src={product.pictureUrl} />
-            </ListItemAvatar>
-            <ListItemText>
-              {product.name} - {product.price}円
-            </ListItemText>
-          </ListItem> */}
       <Card sx={{ maxWidth: 345, flexWrap: 'wrap' }}>
-        {/* <CardHeader title={product.name} /> */}
-        <CardMedia
-          sx={{ height: 140, backgroundSize: 'contain', bgcolor: '#f5f5f5' }}
-          image={product.pictureUrl}
-          title={product.pictureUrl}
-        />
+        <RouterLink to={`/catalog/${product.id}`}>
+          <CardMedia
+            sx={{ height: 140, backgroundSize: 'contain', bgcolor: '#f5f5f5' }}
+            image={product.pictureUrl}
+            title={product.pictureUrl}
+          />
+        </RouterLink>
         <CardContent>
-          <Typography gutterBottom variant="h6" sx={{ fontWeight: 'bold' }}>
-            {product.name}
-          </Typography>
+          <StyledLink to={`/catalog/${product.id}`}>
+            <Typography gutterBottom variant="h6" sx={{ fontWeight: 'bold' }}>
+              {product.name}
+            </Typography>
+          </StyledLink>
+
           <Typography gutterBottom color="red" variant="h6">
             {product.price.toLocaleString('ja-JP', {
               style: 'currency',
@@ -60,7 +66,11 @@ const ProductCard = ({ product }: Props) => {
         </CardContent>
         <CardActions>
           <Button size="small">カートに追加</Button>
-          <Button component={Link} to={`/catalog/${product.id}`} size="small">
+          <Button
+            component={StyledLink}
+            to={`/catalog/${product.id}`}
+            size="small"
+          >
             詳細
           </Button>
         </CardActions>
