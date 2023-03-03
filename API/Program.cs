@@ -1,3 +1,5 @@
+using API.Middleware;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -16,6 +18,9 @@ builder.Services.AddCors(options =>
 
 
 var app = builder.Build();
+
+//add: error handling
+app.UseMiddleware<ExceptionMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
