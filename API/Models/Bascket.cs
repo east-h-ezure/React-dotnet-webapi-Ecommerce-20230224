@@ -7,24 +7,30 @@ namespace API.Models
     public class Bascket
     {
         public int Id { get; set; }
-        public string BuyerId { get; set; }
+        public string? BuyerId { get; set; }
         public List<BascketItem> Items { get; set; } = new();
 
+
         private readonly IConfiguration _config;
+
+        public Bascket(IConfiguration config)
+        {
+            _config = config;
+        }
 
         public async Task AddItem(int productId, int quantity, SqlConnection connection)
         {
             // Get the product from the database
             var product = await connection.QueryFirstOrDefaultAsync<Product>("SELECT * FROM Product WHERE Id = @ProductId", new { ProductId = productId });
 
-            // Create a new basket item and add it to the basket
-            var basketItem = new BascketItem
+            // Create a new bascket item and add it to the bascket
+            var bascketItem = new BascketItem
             {
                 Quantity = quantity,
                 ProductId = productId,
                 Product = product
             };
-            Items.Add(basketItem);
+            Items.Add(bascketItem);
         }
 
         public void AddItem(Product product, int quantity)
@@ -32,24 +38,24 @@ namespace API.Models
             using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
             connection.Open();
 
-            // Check if the item is already in the basket
+            // Check if the item is already in the bascket
             var existingItem = connection.QueryFirstOrDefault<BascketItem>(
-                @"SELECT * FROM BasketItem WHERE BasketId = @basketId AND ProductId = @productId",
-                new { basketId = Id, productId = product.Id });
+                @"SELECT * FROM BascketItem WHERE BascketId = @bascketId AND ProductId = @productId",
+                new { bascketId = Id, productId = product.Id });
 
             if (existingItem == null)
             {
-                // If the item is not in the basket, insert a new item
+                // If the item is not in the bascket, insert a new item
                 connection.Execute(
-                    @"INSERT INTO BasketItem (ProductId, BasketId, Quantity) VALUES (@productId, @basketId, @quantity)",
-                    new { productId = product.Id, basketId = Id, quantity });
+                    @"INSERT INTO BascketItem (ProductId, BascketId, Quantity) VALUES (@productId, @bascketId, @quantity)",
+                    new { productId = product.Id, bascketId = Id, quantity });
             }
             else
             {
-                // If the item is already in the basket, update the quantity
+                // If the item is already in the bascket, update the quantity
                 connection.Execute(
-                    @"UPDATE BasketItem SET Quantity = Quantity + @quantity WHERE BasketId = @basketId AND ProductId = @productId",
-                    new { basketId = Id, productId = product.Id, quantity });
+                    @"UPDATE BascketItem SET Quantity = Quantity + @quantity WHERE BascketId = @bascketId AND ProductId = @productId",
+                    new { bascketId = Id, productId = product.Id, quantity });
             }
         }
 
@@ -58,10 +64,10 @@ namespace API.Models
             using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
             connection.Open();
 
-            // Check if the item is in the basket
+            // Check if the item is in the bascket
             var item = connection.QueryFirstOrDefault<BascketItem>(
-                @"SELECT * FROM BasketItem WHERE BasketId = @basketId AND ProductId = @productId",
-                new { basketId = Id, productId });
+                @"SELECT * FROM BascketItem WHERE BascketId = @bascketId AND ProductId = @productId",
+                new { bascketId = Id, productId });
 
             if (item == null) return;
 
@@ -72,15 +78,15 @@ namespace API.Models
             {
                 // If the new quantity is less than or equal to 0, delete the item
                 connection.Execute(
-                    @"DELETE FROM BasketItem WHERE BasketId = @basketId AND ProductId = @productId",
-                    new { basketId = Id, productId });
+                    @"DELETE FROM BascketItem WHERE BascketId = @bascketId AND ProductId = @productId",
+                    new { bascketId = Id, productId });
             }
             else
             {
                 // Otherwise, update the quantity
                 connection.Execute(
-                    @"UPDATE BasketItem SET Quantity = @newQuantity WHERE BasketId = @basketId AND ProductId = @productId",
-                    new { basketId = Id, productId, newQuantity });
+                    @"UPDATE BascketItem SET Quantity = @newQuantity WHERE BascketId = @bascketId AND ProductId = @productId",
+                    new { bascketId = Id, productId, newQuantity });
             }
         }
 

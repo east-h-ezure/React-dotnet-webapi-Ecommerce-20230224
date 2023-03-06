@@ -7,13 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="新しいフォルダー1\**" />
-    <Content Remove="新しいフォルダー1\**" />
-    <EmbeddedResource Remove="新しいフォルダー1\**" />
-    <None Remove="新しいフォルダー1\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="Controllers\Class.csa" />
   </ItemGroup>
 
