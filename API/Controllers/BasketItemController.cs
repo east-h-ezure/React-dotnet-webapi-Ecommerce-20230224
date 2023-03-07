@@ -23,16 +23,21 @@ namespace API.Controllers
             var transaction = connection.BeginTransaction();
             try
             {
-                var basket = await connection.QueryAsync<BasketItemConfirm>(
+                var basket = await connection.QueryAsync<BasketItemConfirm, Product, BasketItemConfirm>(
                     $@"
-        select BI.*, P.Name, P.Price, p.Description
-        from BasketItem as BI
-        inner join Product as P on BI.ProductId = P.Id
-        inner join Basket as B on B.Id = BI.BasketId
-        where B.Id = @BasketId
-    ",
+                        SELECT BI.*, P.*
+                        FROM BasketItem AS BI
+                        INNER JOIN Product AS P ON BI.ProductId = P.Id
+                        INNER JOIN Basket AS B ON B.Id = BI.BasketId and B.Id =@BasketId
+                    ",
+                    (basketItem, product) =>
+                    {
+                        basketItem.Product = product;
+                        return basketItem;
+                    },
                     new { BasketId = basketId },
-                    transaction
+                    transaction,
+                    splitOn: "Id"
                 );
 
                 if (basket == null || !basket.Any())
@@ -41,18 +46,8 @@ namespace API.Controllers
                 }
 
                 transaction.Commit();
-                var products = basket.Select(b => new BasketItemConfirm
-                {
-                    Quantity = b.Quantity,
-                    ProductId = b.ProductId,
-                    Id = b.Id,
-                    Name = b.Name,
-                    Description = b.Description,
-                    Price = b.Price
-                }).ToList();
 
-                return products;
-
+                return basket.ToList();
             }
             catch (Exception ex)
             {
