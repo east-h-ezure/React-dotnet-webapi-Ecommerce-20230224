@@ -1,4 +1,4 @@
-﻿using API.Models;
+﻿using API.Dtos;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using System.Data.SqlClient;
