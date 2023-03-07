@@ -7,72 +7,72 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BascketController : ControllerBase
+    public class BasketController : ControllerBase
     {
         private readonly IConfiguration _config;
 
-        public BascketController(IConfiguration config)
+        public BasketController(IConfiguration config)
         {
             _config = config;
         }
 
         [HttpGet]
-        public async Task<ActionResult<BascketDto>> GetBascket()
+        public async Task<ActionResult<Basket>> GetBasket()
         {
             using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
-            var bascket = await connection.QueryFirstOrDefaultAsync<BascketDto>(
+            var basket = await connection.QueryFirstOrDefaultAsync<Basket>(
                    $@"
         SELECT 
-            Bascket2.Id as BascketId, 
-            Bascket2.UserId, 
-            BascketItem2.BascketId as BascketId, 
-            BascketItem2.ProductId as ProductId,
+            Basket.Id as BasketId, 
+            Basket.UserId, 
+            BasketItem.BasketId as BasketId, 
+            BasketItem.ProductId as ProductId,
             Product.Name as ProductName, 
             Product.Price as ProductPrice, 
             Product.Description as ProductDescription
-        FROM Bascket2
-        LEFT JOIN BascketItem2 ON Bascket2.Id = BascketItem2.BascketId
-        LEFT JOIN Product ON BascketItem2.ProductId = Product.Id"
+        FROM Basket
+        LEFT JOIN BasketItem ON Basket.Id = BasketItem.BasketId
+        LEFT JOIN Product ON BasketItem.ProductId = Product.Id"
                    );
 
-            if (bascket == null)
+            if (basket == null)
             {
                 return NotFound();
             }
 
-            return Ok(bascket);
+            return Ok(basket);
         }
 
         //TODO: 別のコントローラーファイルに移動
-//        [Route("api/BascketItem")]
+//        [Route("api/BasketItem")]
 //        [HttpGet]
-//        public async Task<ActionResult<BascketItemDto>> GetBascketItem()
+//        public async Task<ActionResult<BasketItemDto>> GetBasketItem()
 //        {
 //            using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
-//            var bascket = await connection.QueryFirstOrDefaultAsync<BascketItemDto>(
+//            var basket = await connection.QueryFirstOrDefaultAsync<BasketItemDto>(
 //                   $@"
 //        SELECT 
 //            *
-//        FROM BascketItem2
+//        FROM BasketItem
 //        Where
-//BascketId = @BascketId"
-////,new { BascketId = bascket.Id }
+//BasketId = @BasketId"
+////,new { BasketId = basket.Id }
 
 //                   //,new { buyerId = Request.Cookies["buyerId"] }
 //                   );
 
-//            if (bascket == null)
+//            if (basket == null)
 //            {
 //                return NotFound();
 //            }
 
-//            return Ok(bascket);
+//            return Ok(basket);
 //        }
 
 
 
             [HttpPost]
-        public async Task<IActionResult> AddItemToBascket(int productId, int quantity, string userId, Guid id)
+        public async Task<IActionResult> AddItemToBasket(int productId, int quantity, string userId, Guid id)
         {
             // データベース接続用の SqlConnection オブジェクトを作成し、OpenAsync メソッドで接続します
             using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
@@ -84,23 +84,23 @@ namespace API.Controllers
             try
             {
                 // 指定されたバスケットの情報を取得します
-                //var bascket = await connection.QuerySingleOrDefaultAsync<BascketDto>("SELECT * FROM Bacsket WHERE Id = @Id", new { Id = "hoge" }, transaction);
+                //var basket = await connection.QuerySingleOrDefaultAsync<BasketDto>("SELECT * FROM Bacsket WHERE Id = @Id", new { Id = "hoge" }, transaction);
                 //修正後
                 // insert Basket
                 // UserId = 'aa', Id = 'AFACBFAC-A1EC-4754-B349-1DDA2B98FB21'
                 //guidの生成したものを登録
                 //ひとまずベタ打ち
-                var bascket = await connection.QuerySingleOrDefaultAsync<BascketDto>("SELECT * FROM Bascket2 WHERE UserId = @UserId and Id = @Id", new { Id = id, UserId = userId }, transaction);
+                var basket = await connection.QuerySingleOrDefaultAsync<Basket>("SELECT * FROM Basket WHERE UserId = @UserId and Id = @Id", new { Id = id, UserId = userId }, transaction);
                 //修正後
                 // select Basket
                 // UserId = 'a', Id = 'AFACBFAC-A1EC-4754-B349-1DDA2B98FB21'
 
 
                 // 取得できなかった場合は、新しいバスケットを作成します
-                if (bascket == null)
+                if (basket == null)
                 {
-                    bascket = new BascketDto() { Id = bascket.Id, UserId = bascket.UserId };
-                    await connection.ExecuteAsync("INSERT INTO Bascket2 (Id, UserId) VALUES (@Id, @UserId)", bascket, transaction);
+                    basket = new Basket() { Id = basket.Id, UserId = basket.UserId };
+                    await connection.ExecuteAsync("INSERT INTO Basket (Id, UserId) VALUES (@Id, @UserId)", basket, transaction);
                     //修正後
                     // insert Basket
                     // USerId = 'a', Id = 'AFACBFAC-A1EC-4754-B349-1DDA2B98FB21'
@@ -118,33 +118,33 @@ namespace API.Controllers
                 }
 
                 // 既存の商品がある場合は、数量を加算します
-                //ユーザーがすでにその商品をBascketItemに追加(存在)しているかどうか
+                //ユーザーがすでにその商品をBasketItemに追加(存在)しているかどうか
                 // var existItem = 
                 //select
-                //BascketItem
-                //bascketId, productId
+                //BasketItem
+                //basketId, productId
                 //
-                var existItem = await connection.QuerySingleOrDefaultAsync<BascketItemDto>(
-                    $@"SELECT * FROM BascketItem2 WHERE
-                BascketId = @BascketId and ProductId = @ProductId",
-                    new { ProductId = productId, BascketId = bascket.Id}, transaction);
+                var existItem = await connection.QuerySingleOrDefaultAsync<BasketItem>(
+                    $@"SELECT * FROM BasketItem WHERE
+                BasketId = @BasketId and ProductId = @ProductId",
+                    new { ProductId = productId, BasketId = basket.Id}, transaction);
 
                 if (existItem != null)
                 {
                     existItem.Quantity += quantity;
                     await connection.ExecuteAsync($@"
-UPDATE BascketItem2
+UPDATE BasketItem
 SET
 Quantity = @Quantity
-WHERE BascketId = @BascketId AND ProductId = @ProductId
-", new { Quantity = existItem.Quantity, BascketId = bascket.Id, ProductId = productId }, transaction);
+WHERE BasketId = @BasketId AND ProductId = @ProductId
+", new { Quantity = existItem.Quantity, BasketId = basket.Id, ProductId = productId }, transaction);
                 }
                 // 既存の商品がない場合は、新しい商品を追加します
                 else
                 {
-                    var newItem = new BascketItemDto()
+                    var newItem = new BasketItem()
                     {
-                        BascketId = bascket.Id,
+                        BasketId = basket.Id,
                         ProductId = productId,
                         //Name = product.Name,
                         //Price = product.Price,
@@ -153,13 +153,13 @@ WHERE BascketId = @BascketId AND ProductId = @ProductId
                         //Brand = product.Brand,
                         //Type = product.Type,
                     };
-                    var bascketItem = await connection.QuerySingleOrDefaultAsync<BascketItemDto>(
-                        $@"SELECT * FROM BascketItem2 WHERE BascketId = @BascketId and ProductId = @ProductId",
-                        new { BascketId = bascket.Id, ProductId = productId }, transaction);
+                    var basketItem = await connection.QuerySingleOrDefaultAsync<BasketItem>(
+                        $@"SELECT * FROM BasketItem WHERE BasketId = @BasketId and ProductId = @ProductId",
+                        new { BasketId = basket.Id, ProductId = productId }, transaction);
 
                     await connection.ExecuteAsync(
-                        "INSERT INTO BascketItem2 (BascketId, ProductId, Quantity) VALUES (@BascketId, @ProductId, @Quantity)",
-                        new { BascketId = bascket.Id, ProductId = productId, Quantity = quantity }, transaction);
+                        "INSERT INTO BasketItem (BasketId, ProductId, Quantity) VALUES (@BasketId, @ProductId, @Quantity)",
+                        new { BasketId = basket.Id, ProductId = productId, Quantity = quantity }, transaction);
                 }
 
                 // トランザクションをコミットして、200 OK を返します
@@ -170,7 +170,7 @@ WHERE BascketId = @BascketId AND ProductId = @ProductId
             {
                 // 例外が発生した場合は、トランザクションをロールバックして 400 Bad Request エラーを返します
                 transaction.Rollback();
-                return BadRequest(new ProblemDetails { Title = "Problem adding item to bascket", Detail = ex.Message });
+                return BadRequest(new ProblemDetails { Title = "Problem adding item to basket", Detail = ex.Message });
             }
         }
 
@@ -186,31 +186,31 @@ WHERE BascketId = @BascketId AND ProductId = @ProductId
             try
             {
                 // 指定されたユーザーの買い物かごを取得
-                var bascket = await connection.QuerySingleOrDefaultAsync<BascketDto>($@"
-SELECT * FROM Bascket2 WHERE UserId = @UserId and Id = @Id",
+                var basket = await connection.QuerySingleOrDefaultAsync<Basket>($@"
+SELECT * FROM Basket WHERE UserId = @UserId and Id = @Id",
 new { Id = id, UserId = userId }, transaction);
-                // 指定されたユーザーとBascketのIdのBascketItemを取得
-                var existItem = await connection.QuerySingleOrDefaultAsync<BascketItemDto>(
-    $@"SELECT * FROM BascketItem2 WHERE
-                BascketId = @BascketId and ProductId = @ProductId",
-    new { ProductId = productId, BascketId = bascket.Id }, transaction);
+                // 指定されたユーザーとBasketのIdのBasketItemを取得
+                var existItem = await connection.QuerySingleOrDefaultAsync<BasketItem>(
+    $@"SELECT * FROM BasketItem WHERE
+                BasketId = @BasketId and ProductId = @ProductId",
+    new { ProductId = productId, BasketId = basket.Id }, transaction);
 
                 //アイテム数の再定義
                 var newQuantity = existItem.Quantity - quantity;
 
                 if(newQuantity <= 0)
                 {
-                    // 変更後の量が0以下の場合、指定のbascketItemを削除する
+                    // 変更後の量が0以下の場合、指定のbasketItemを削除する
                     connection.Execute(
-                        @"DELETE FROM BascketItem2 WHERE BascketId = @bascketId AND ProductId = @productId",
-                        new { bascketId = bascket.Id, productId }, transaction);
+                        @"DELETE FROM BasketItem WHERE BasketId = @basketId AND ProductId = @productId",
+                        new { basketId = basket.Id, productId }, transaction);
                 }
                 else
                 {
-                    // 変更後のquantityが0以下ではない場合、指定のbascketItemの量をupdateする
+                    // 変更後のquantityが0以下ではない場合、指定のbasketItemの量をupdateする
                     connection.Execute(
-    @"UPDATE BascketItem2 SET Quantity = @newQuantity WHERE BascketId = @bascketId AND ProductId = @productId",
-    new { bascketId = bascket.Id, productId, newQuantity }, transaction);
+    @"UPDATE BasketItem SET Quantity = @newQuantity WHERE BasketId = @basketId AND ProductId = @productId",
+    new { basketId = basket.Id, productId, newQuantity }, transaction);
                 }
 
                 // トランザクションをコミットして、200 OK を返す
@@ -223,7 +223,7 @@ new { Id = id, UserId = userId }, transaction);
                 transaction.Rollback();
                 return BadRequest(new ProblemDetails
                 {
-                    Title = "Problem removing item to bascket",
+                    Title = "Problem removing item to basket",
                     Detail = $"Error occurred while executing command: {ex.Message}"
                 });
             }
@@ -234,30 +234,30 @@ new { Id = id, UserId = userId }, transaction);
 
         // TODO: privateメソッド実装して冗長性なくせないか試す
 
-            //private async Task<Bascket> RetrieveBascket()
+            //private async Task<Basket> RetrieveBasket()
             //{
             //    var buyerId = Request.Cookies["buyerId"];
             //    if (buyerId == null) return null;
             //    //DB接続
             //    using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
             //    //ログインしているバスケットの取得
-            //    var bascket = await connection.QueryFirstOrDefaultAsync<BascketDto>(
-            //        "SELECT * FROM Bascket2 WHERE BuyerId = @BuyerId",
+            //    var basket = await connection.QueryFirstOrDefaultAsync<BasketDto>(
+            //        "SELECT * FROM Basket WHERE BuyerId = @BuyerId",
             //        new { BuyerId = buyerId });
 
 
-            //    if (bascket != null)
+            //    if (basket != null)
             //    {//バスケットの中身がある場合。バスケットアイテムの中身を取得する
-            //        var bascketItems = await connection.QueryAsync<BascketItem>(
-            //            "SELECT * FROM BascketItem WHERE BascketId = @BascketId",
-            //            new { BascketId = bascket.Id });
-            //        bascket.Items = bascketItems.ToList();
+            //        var basketItems = await connection.QueryAsync<BasketItem>(
+            //            "SELECT * FROM BasketItem WHERE BasketId = @BasketId",
+            //            new { BasketId = basket.Id });
+            //        basket.Items = basketItems.ToList();
             //    }
             
-            //    return bascket;
+            //    return basket;
             //}
 
-        //private async Task<Bascket> CreateBascket()
+        //private async Task<Basket> CreateBasket()
         //{
         //    var buyerId = Guid.NewGuid().ToString();
 
@@ -270,21 +270,21 @@ new { Id = id, UserId = userId }, transaction);
         //    if (Response != null)
         //    {
         //        Response.Cookies.Append("buyerId", buyerId, cookieOptions);
-        //        return new Bascket(_config) { BuyerId = buyerId };
+        //        return new Basket(_config) { BuyerId = buyerId };
         //    }
         //    else
         //    {
-        //        var bascket = new Bascket(_config) { BuyerId = buyerId };
+        //        var basket = new Basket(_config) { BuyerId = buyerId };
 
 
         //        using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
         //        await connection.ExecuteAsync(
-        //            "INSERT INTO Bascket (BuyerId) VALUES (@BuyerId)",
-        //            new { BuyerId = bascket.BuyerId });
+        //            "INSERT INTO Basket (BuyerId) VALUES (@BuyerId)",
+        //            new { BuyerId = basket.BuyerId });
 
-        //        bascket.Id = (int)await connection.ExecuteScalarAsync("SELECT SCOPE_IDENTITY()");
+        //        basket.Id = (int)await connection.ExecuteScalarAsync("SELECT SCOPE_IDENTITY()");
 
-        //        return bascket;
+        //        return basket;
         //    }
         //}
 
