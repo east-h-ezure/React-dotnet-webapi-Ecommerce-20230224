@@ -16,7 +16,7 @@ namespace API.Controllers
             _config = config;
         }
 
-        [HttpGet]
+        [HttpGet(Name = "GetBasket")]
         public async Task<ActionResult<Basket>> GetBasket()
         {
             using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
@@ -39,40 +39,12 @@ namespace API.Controllers
             {
                 return NotFound();
             }
-
+            //return CreatedAtRoute("GetBasket", MapBasketToDto(basket));
             return Ok(basket);
         }
 
-        //TODO: 別のコントローラーファイルに移動
-//        [Route("api/BasketItem")]
-//        [HttpGet]
-//        public async Task<ActionResult<BasketItemDto>> GetBasketItem()
-//        {
-//            using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
-//            var basket = await connection.QueryFirstOrDefaultAsync<BasketItemDto>(
-//                   $@"
-//        SELECT 
-//            *
-//        FROM BasketItem
-//        Where
-//BasketId = @BasketId"
-////,new { BasketId = basket.Id }
-
-//                   //,new { buyerId = Request.Cookies["buyerId"] }
-//                   );
-
-//            if (basket == null)
-//            {
-//                return NotFound();
-//            }
-
-//            return Ok(basket);
-//        }
-
-
-
             [HttpPost]
-        public async Task<IActionResult> AddItemToBasket(int productId, int quantity, string userId, Guid id)
+        public async Task<ActionResult<Basket>> AddItemToBasket(int productId, int quantity, string userId, Guid id)
         {
             // データベース接続用の SqlConnection オブジェクトを作成し、OpenAsync メソッドで接続します
             using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
@@ -164,7 +136,8 @@ WHERE BasketId = @BasketId AND ProductId = @ProductId
 
                 // トランザクションをコミットして、200 OK を返します
                 transaction.Commit();
-                return Ok();
+                //return CreatedAtRoute("GetBasket", MapBasketToDto(basket));
+                return StatusCode(201);
             }
             catch (Exception ex)
             {
@@ -215,7 +188,7 @@ new { Id = id, UserId = userId }, transaction);
 
                 // トランザクションをコミットして、200 OK を返す
                 transaction.Commit();
-                return Ok();
+                return StatusCode(201);
             }
             catch (Exception ex)
             {
@@ -234,28 +207,28 @@ new { Id = id, UserId = userId }, transaction);
 
         // TODO: privateメソッド実装して冗長性なくせないか試す
 
-            //private async Task<Basket> RetrieveBasket()
-            //{
-            //    var buyerId = Request.Cookies["buyerId"];
-            //    if (buyerId == null) return null;
-            //    //DB接続
-            //    using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
-            //    //ログインしているバスケットの取得
-            //    var basket = await connection.QueryFirstOrDefaultAsync<BasketDto>(
-            //        "SELECT * FROM Basket WHERE BuyerId = @BuyerId",
-            //        new { BuyerId = buyerId });
+        //private async Task<Basket> RetrieveBasket()
+        //{
+        //    var buyerId = Request.Cookies["buyerId"];
+        //    if (buyerId == null) return null;
+        //    //DB接続
+        //    using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
+        //    //ログインしているバスケットの取得
+        //    var basket = await connection.QueryFirstOrDefaultAsync<BasketDto>(
+        //        "SELECT * FROM Basket WHERE BuyerId = @BuyerId",
+        //        new { BuyerId = buyerId });
 
 
-            //    if (basket != null)
-            //    {//バスケットの中身がある場合。バスケットアイテムの中身を取得する
-            //        var basketItems = await connection.QueryAsync<BasketItem>(
-            //            "SELECT * FROM BasketItem WHERE BasketId = @BasketId",
-            //            new { BasketId = basket.Id });
-            //        basket.Items = basketItems.ToList();
-            //    }
-            
-            //    return basket;
-            //}
+        //    if (basket != null)
+        //    {//バスケットの中身がある場合。バスケットアイテムの中身を取得する
+        //        var basketItems = await connection.QueryAsync<BasketItem>(
+        //            "SELECT * FROM BasketItem WHERE BasketId = @BasketId",
+        //            new { BasketId = basket.Id });
+        //        basket.Items = basketItems.ToList();
+        //    }
+
+        //    return basket;
+        //}
 
         //private async Task<Basket> CreateBasket()
         //{
@@ -286,6 +259,60 @@ new { Id = id, UserId = userId }, transaction);
 
         //        return basket;
         //    }
+        //}
+
+        //private Basket MapBasketToDto(Basket basket)
+        //{
+        //    return new Basket
+        //    {
+        //        Id = basket.Id,
+        //        BuyerId = basket.BuyerId,
+        //        Items = basket.Items.Select(item => new BasketItem
+        //        {
+        //            ProductId = item.ProductId,
+        //            Name = item.Product.Name,
+        //            Price = item.Product.Price,
+        //            PictureUrl = item.Product.PictureUrl,
+        //            Type = item.Product.Type,
+        //            Brand = item.Product.Brand,
+        //            Quantity = item.Quantity
+        //        }).ToList()
+        //    };
+        //}
+
+        //private async Task<Basket> MapBasketToDto(Basket basket)
+        //{
+        //    var basketDto = new Basket
+        //    {
+        //        Id = basket.Id,
+        //        UserId = basket.UserId,
+        //        Items = new List<BasketItem>()
+        //    };
+
+        //    foreach (var item in basket.Items)
+        //    {
+        //        var product = await GetProductById(item.ProductId);
+        //        basketDto.Items.Add(new BasketItem
+        //        {
+        //            ProductId = item.ProductId,
+        //            BasketId = item.BasketId,
+        //            Quantity = item.Quantity,
+        //            Product = new Product
+        //            {
+        //                Id = product.Id,
+        //                Name = product.Name,
+        //                Description = product.Description,
+        //                Price = product.Price,
+        //                PictureUrl = product.PictureUrl,
+        //                Type = product.Type,
+        //                Brand = product.Brand,
+        //                QuantityInStock = product.QuantityInStock,
+        //                Publisher = product.Publisher
+        //            }
+        //        });
+        //    }
+
+        //    return basketDto;
         //}
 
 
