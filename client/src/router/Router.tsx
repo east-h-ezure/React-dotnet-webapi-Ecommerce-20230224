@@ -10,6 +10,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import App from '../App';
 import Header2 from '../app/layout/Header2';
 import HomePage from '../features/home/HomePage';
+import AboutPage from '../features/about/AboutPage';
 // import Header from '../app/layout/Header';
 import ProductDetails from '../features/catalog/ProductDetails';
 
@@ -37,6 +38,7 @@ const Router = () => {
             <Route path="/contact" element={<Contact />} />
             <Route path="/catalog/:id" element={<ProductDetails />} />
             <Route path="/home" element={<HomePage />} />
+            <Route path="/about" element={<AboutPage />} />
           </Routes>
         </BrowserRouter>
       </Container>
