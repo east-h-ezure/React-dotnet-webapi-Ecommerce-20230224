@@ -31,6 +31,11 @@ const StyledLink = styled(RouterLink)`
 `;
 
 const ProductCard = ({ product }: Props) => {
+  // const [loading, setLoading] = useState(false);
+  // const handleAddItem = (productId: number) => {
+  //   setLoading(true);
+  //   Agent.
+  // }
   return (
     <div>
       <Card sx={{ maxWidth: 345, flexWrap: 'wrap' }}>

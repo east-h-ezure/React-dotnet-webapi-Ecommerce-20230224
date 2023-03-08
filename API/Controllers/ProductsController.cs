@@ -5,9 +5,9 @@ using System.Data.SqlClient;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ProductsController: ControllerBase
+    //[Route("api/[controller]")]
+    //[ApiController]
+    public class ProductsController: BaseApiController
     {
         private readonly IConfiguration _config;
 
