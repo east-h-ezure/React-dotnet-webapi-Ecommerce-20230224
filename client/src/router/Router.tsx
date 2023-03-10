@@ -5,15 +5,17 @@ import {
   CssBaseline,
   ThemeProvider,
 } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import App from '../App';
 import Header2 from '../app/layout/Header2';
 import HomePage from '../features/home/HomePage';
 // import Header from '../app/layout/Header';
 import ProductDetails from '../features/catalog/ProductDetails';
+import { Product } from '../product';
 
 const Router = () => {
+  const [products, setProducts] = useState<Product[]>([]);
   const [darkMode, setDarkMode] = useState(false);
   const paletteType = darkMode ? 'dark' : 'light';
   const theme = createTheme({
@@ -21,6 +23,15 @@ const Router = () => {
       mode: paletteType,
     },
   });
+  useEffect(() => {
+    try {
+      fetch('https://localhost:5000/api/products', { mode: 'cors' })
+        .then((response) => response.json())
+        .then((data) => setProducts(data));
+    } catch (error) {
+      console.error(error); // エラーが発生した行を特定するために、コンソールにエラーを出力する
+    }
+  }, []);
 
   const handleThemeChange = () => {
     setDarkMode(!darkMode);

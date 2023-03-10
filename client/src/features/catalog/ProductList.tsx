@@ -19,8 +19,8 @@ const ProductList = ({ products }: Props) => {
     <div>
       <Grid container spacing={4} sx={{ mt: 3 }}>
         {products.map((product) => (
-          <Grid item xs={3}>
-            <ProductCard key={product.id} product={product} />
+          <Grid item key={product.id} xs={3}>
+            <ProductCard product={product} />
           </Grid>
         ))}
       </Grid>

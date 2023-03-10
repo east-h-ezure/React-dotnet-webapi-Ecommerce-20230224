@@ -12,7 +12,7 @@ import {
   Typography,
 } from '@mui/material';
 import { fontWeight } from '@mui/system';
-import React from 'react';
+import React, { useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { Product } from '../../product';
 import { styled } from '@mui/system';
@@ -31,7 +31,7 @@ const StyledLink = styled(RouterLink)`
 `;
 
 const ProductCard = ({ product }: Props) => {
-  // const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   // const handleAddItem = (productId: number) => {
   //   setLoading(true);
   //   Agent.
