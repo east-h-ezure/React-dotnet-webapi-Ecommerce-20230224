@@ -6,6 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
 import ContactPage from './features/contact/Contact';
 import Router from './router/Router';
+import { Basket } from './app/models/basket';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

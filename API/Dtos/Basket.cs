@@ -6,5 +6,10 @@
         public Guid Id { get; set; }
         //追加
         public List<BasketItem> Items { get; set; }
+
+        //public Basket()
+        //{
+        //    Items = new List<BasketItem>();
+        //}
     }
 }

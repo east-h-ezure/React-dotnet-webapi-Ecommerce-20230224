@@ -10,12 +10,12 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import App from '../App';
 import Header2 from '../app/layout/Header2';
 import HomePage from '../features/home/HomePage';
-// import Header from '../app/layout/Header';
 import ProductDetails from '../features/catalog/ProductDetails';
 import { Product } from '../product';
+import { Basket, BasketConfirm } from '../app/models/basket';
+import AppBasket from '../AppBasket';
 
 const Router = () => {
-  const [products, setProducts] = useState<Product[]>([]);
   const [darkMode, setDarkMode] = useState(false);
   const paletteType = darkMode ? 'dark' : 'light';
   const theme = createTheme({
@@ -23,31 +23,41 @@ const Router = () => {
       mode: paletteType,
     },
   });
-  useEffect(() => {
-    try {
-      fetch('https://localhost:5000/api/products', { mode: 'cors' })
-        .then((response) => response.json())
-        .then((data) => setProducts(data));
-    } catch (error) {
-      console.error(error); // エラーが発生した行を特定するために、コンソールにエラーを出力する
-    }
-  }, []);
+
+  const [baskets, setBaskets] = useState<BasketConfirm[]>([]);
+  const [basket, setBasket] = useState<BasketConfirm | null>(null);
 
   const handleThemeChange = () => {
     setDarkMode(!darkMode);
   };
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Container maxWidth={false}>
         <BrowserRouter>
-          {/* <Header darkMode={darkMode} handleThemeChange={handleThemeChange} /> */}
           <Header2 darkMode={darkMode} handleThemeChange={handleThemeChange} />
           <Routes>
             <Route path="/" element={<App />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/catalog/:id" element={<ProductDetails />} />
             <Route path="/home" element={<HomePage />} />
+            {/* {basket !== null && (
+              <Route
+                path="/basket"
+                element={<AppBasket baskets={baskets} basket={basket} />}
+              />
+            )} */}
+            {/* <Route
+              path="/basket"
+              element={<AppBasket baskets={baskets} basket={basket} />}
+            /> */}
+            {basket && (
+              <Route
+                path="/basket"
+                element={<AppBasket baskets={baskets} basket={basket} />}
+              />
+            )}
           </Routes>
         </BrowserRouter>
       </Container>
