@@ -24,8 +24,8 @@ const Router = () => {
     },
   });
 
-  const [baskets, setBaskets] = useState<BasketConfirm[]>([]);
-  const [basket, setBasket] = useState<BasketConfirm | null>(null);
+  // const [baskets, setBaskets] = useState<BasketConfirm[]>([]);
+  // const [basket, setBasket] = useState<BasketConfirm | null>(null);
 
   const handleThemeChange = () => {
     setDarkMode(!darkMode);
@@ -52,12 +52,10 @@ const Router = () => {
               path="/basket"
               element={<AppBasket baskets={baskets} basket={basket} />}
             /> */}
-            {basket && (
-              <Route
-                path="/basket"
-                element={<AppBasket baskets={baskets} basket={basket} />}
-              />
-            )}
+            {/* {basket && (
+              <Route path="/basket" element={<AppBasket basket={basket} />} />
+            )} */}
+            <Route path="/basket" element={<AppBasket />} />
           </Routes>
         </BrowserRouter>
       </Container>

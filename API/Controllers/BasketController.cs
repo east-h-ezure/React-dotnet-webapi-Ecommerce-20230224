@@ -63,8 +63,12 @@ namespace API.Controllers
                 // UserId = 'aa', Id = 'AFACBFAC-A1EC-4754-B349-1DDA2B98FB21'
                 //guidの生成したものを登録
                 //ひとまずベタ打ち
-                
-                var basket = await connection.QuerySingleOrDefaultAsync<Basket>("SELECT * FROM Basket WHERE UserId = @UserId and Id = @Id", new { Id = id, UserId = userId }, transaction);
+
+                var basket = await connection.QuerySingleOrDefaultAsync<Basket>(@$"
+SELECT * FROM Basket WHERE UserId = @UserId and Id = @Id
+",
+new { Id = id, UserId = userId }, transaction);
+
                 //修正後
                 // select Basket
                 // UserId = 'a', Id = 'AFACBFAC-A1EC-4754-B349-1DDA2B98FB21'
@@ -205,6 +209,7 @@ new { Id = id, UserId = userId }, transaction);
             }
 
         }
+
 
     }
 

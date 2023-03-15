@@ -61,12 +61,12 @@ const ProductCard = ({ product }: Props) => {
       .catch((error) => console.log(error))
       .finally(() => setLoading(false));
   }
-  const handleAddItem2 = async (productId: number) => {
+  const handleAddItem2 = async (productId: number, quantity = 1) => {
     setLoading(true);
     try {
       // const token = 'your-auth-token';
       const response = await fetch(
-        `${config.API_URL}Basket?productId=${productId}&quantity=1&userId=aa&
+        `${config.API_URL}Basket?productId=${productId}&quantity=${quantity}&userId=aa&
         id=AFACBFAC-A1EC-4754-B349-1DDA2B98FB21`,
         {
           method: 'POST',

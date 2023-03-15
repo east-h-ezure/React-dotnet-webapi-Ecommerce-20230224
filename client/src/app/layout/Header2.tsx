@@ -90,7 +90,7 @@ const Header = ({ handleThemeChange, darkMode }: Props) => {
             <MenuIcon />
           </IconButton>
           <Typography sx={{ ml: 3 }} variant="h5" noWrap>
-            本の森
+            B-LUXE
           </Typography>
           <Switch checked={darkMode} onChange={handleThemeChange} />
           <div style={{ flexGrow: 1 }}></div>
