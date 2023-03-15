@@ -36,6 +36,8 @@ const StyledLink = styled(RouterLink)`
 
 const ProductCard = ({ product }: Props) => {
   const [loading, setLoading] = useState(false);
+  const usetId = 'aa';
+  // const guid = 'AFACBFAC-A1EC-4754-B349-1DDA2B98FB21';
 
   const responseBody = (response: AxiosResponse) => response.data;
 
@@ -55,19 +57,13 @@ const ProductCard = ({ product }: Props) => {
       requests.del(`basket?productId=${productId}&quantity=${quantity}`),
   };
 
-  function handleAddItem(productId: number) {
-    setLoading(true);
-    Basket.addItem(productId)
-      .catch((error) => console.log(error))
-      .finally(() => setLoading(false));
-  }
   const handleAddItem2 = async (productId: number, quantity = 1) => {
     setLoading(true);
     try {
       // const token = 'your-auth-token';
       const response = await fetch(
-        `${config.API_URL}Basket?productId=${productId}&quantity=${quantity}&userId=aa&
-        id=AFACBFAC-A1EC-4754-B349-1DDA2B98FB21`,
+        `${config.API_URL}Basket?productId=${productId}&quantity=${quantity}&userId=aa`,
+        // id=AFACBFAC-A1EC-4754-B349-1DDA2B98FB21`
         {
           method: 'POST',
           headers: {

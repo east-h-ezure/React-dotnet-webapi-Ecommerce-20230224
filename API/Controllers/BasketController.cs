@@ -45,7 +45,9 @@ namespace API.Controllers
         }
 
             [HttpPost]
-        public async Task<ActionResult<Basket>> AddItemToBasket(int productId, int quantity, string userId, Guid id)
+            //TODO: Guid生成できるようになったら引数追加
+            //Guid  id
+        public async Task<ActionResult<Basket>> AddItemToBasket(int productId, int quantity, string userId)
         {
             // データベース接続用の SqlConnection オブジェクトを作成し、OpenAsync メソッドで接続します
             using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
@@ -65,9 +67,11 @@ namespace API.Controllers
                 //ひとまずベタ打ち
 
                 var basket = await connection.QuerySingleOrDefaultAsync<Basket>(@$"
-SELECT * FROM Basket WHERE UserId = @UserId and Id = @Id
+SELECT * FROM Basket WHERE UserId = @UserId
 ",
-new { Id = id, UserId = userId }, transaction);
+new { UserId = userId }, transaction);
+                //TODO: guid生成したら条件追加
+                //Id = @Id
 
                 //修正後
                 // select Basket
