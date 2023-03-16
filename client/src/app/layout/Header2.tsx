@@ -95,7 +95,13 @@ const Header = ({ handleThemeChange, darkMode }: Props) => {
           <Switch checked={darkMode} onChange={handleThemeChange} />
           <div style={{ flexGrow: 1 }}></div>
           <Box sx={{ display: 'flex' }}>
-            <IconButton size="large" edge="start" color="inherit">
+            <IconButton
+              size="large"
+              edge="start"
+              color="inherit"
+              component={Link}
+              to="basket"
+            >
               <Badge badgeContent="4" color="secondary">
                 <ShoppingCart />
               </Badge>
