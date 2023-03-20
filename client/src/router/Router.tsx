@@ -14,8 +14,14 @@ import ProductDetails from '../features/catalog/ProductDetails';
 import { Product } from '../product';
 import { Basket, BasketConfirm } from '../app/models/basket';
 import AppBasket from '../AppBasket';
+import { getCookie } from '../app/util/util';
+// import agent from '../app/api/agent';
+// import { useStoreContext } from '../app/context/StoreContext';
+import Loading from '../app/layout/Loading';
 
 const Router = () => {
+  // const { setBasket } = useStoreContext();
+  const [loading, setLoading] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
   const paletteType = darkMode ? 'dark' : 'light';
   const theme = createTheme({
@@ -23,6 +29,15 @@ const Router = () => {
       mode: paletteType,
     },
   });
+  // useEffect(() => {
+  //   const userId = getCookie('userId');
+  //   if (userId) {
+  //     agent.Basket.get()
+  //       .then((basket) => setBasket(basket))
+  //       .catch((error) => console.log(error))
+  //       .finally(() => setLoading(false));
+  //   }
+  // }, [setBasket]);
 
   // const [baskets, setBaskets] = useState<BasketConfirm[]>([]);
   // const [basket, setBasket] = useState<BasketConfirm | null>(null);
@@ -30,6 +45,7 @@ const Router = () => {
   const handleThemeChange = () => {
     setDarkMode(!darkMode);
   };
+  // if (loading) return <Loading message="initialising app" />;
 
   return (
     <ThemeProvider theme={theme}>
