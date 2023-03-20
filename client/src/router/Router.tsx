@@ -39,12 +39,20 @@ const Router = () => {
   //   }
   // }, [setBasket]);
 
-  // const [baskets, setBaskets] = useState<BasketConfirm[]>([]);
+  const [basketItems, setBasketItems] = useState<BasketConfirm[]>([]);
   // const [basket, setBasket] = useState<BasketConfirm | null>(null);
 
   const handleThemeChange = () => {
     setDarkMode(!darkMode);
   };
+  // ステップ1
+  let totalItemCount = 0;
+
+  // ステップ2
+  basketItems.forEach((item) => {
+    totalItemCount += item.quantity;
+  });
+  console.log(totalItemCount);
   // if (loading) return <Loading message="initialising app" />;
 
   return (

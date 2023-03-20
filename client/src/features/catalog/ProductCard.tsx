@@ -109,17 +109,13 @@ const ProductCard = ({ product }: Props) => {
           product: item.product,
         };
       });
-      // const basket: Basket = {
-      //   userId: 'aa',
-      //   id: data?.id,
-      //   items: basketItems,
-      // };
-      // setBasket(basket);
       setBasketItem(basketItems);
+      window.location.reload();
     } catch (error) {
       console.error(error);
     } finally {
       setLoading(false);
+      window.location.reload();
     }
   };
 
