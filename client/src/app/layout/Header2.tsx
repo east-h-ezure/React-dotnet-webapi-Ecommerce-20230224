@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -21,6 +21,10 @@ import { styled } from '@mui/material/styles';
 import { CSSObject } from '@mui/system';
 import { Link } from 'react-router-dom';
 import { ShoppingCart } from '@mui/icons-material';
+import agent from '../api/agent';
+import Loading from './Loading';
+import { BasketConfirm } from '../models/basket';
+import axios from 'axios';
 
 // スタイルの定義
 const drawerWidth = 240;
@@ -54,6 +58,7 @@ interface Props {
 }
 
 const Header = ({ handleThemeChange, darkMode }: Props) => {
+  const [loading, setLoading] = useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const handleDrawerToggle = () => {
@@ -70,6 +75,31 @@ const Header = ({ handleThemeChange, darkMode }: Props) => {
       color: 'text.secondary',
     },
   };
+  const [basketItems, setBasketItems] = useState<BasketConfirm[]>([]);
+  const [basketId, setBasketId] = useState<string>(
+    'AFACBFAC-A1EC-4754-B349-1DDA2B98FB21'
+  );
+
+  useEffect(() => {
+    const fetchBasketItems = async () => {
+      const response = await axios.get(
+        `https://localhost:5000/api/BasketItem?basketId=${basketId}`
+      );
+      setBasketItems(response.data);
+      setLoading(false);
+    };
+    fetchBasketItems();
+  }, [basketId]);
+
+  let totalItemCount = 0;
+
+  // ステップ2
+  basketItems.forEach((item) => {
+    totalItemCount += item.quantity;
+  });
+  console.log(totalItemCount);
+
+  if (loading) return <Loading />;
 
   return (
     <AppContainer>
@@ -102,7 +132,7 @@ const Header = ({ handleThemeChange, darkMode }: Props) => {
               component={Link}
               to="basket"
             >
-              <Badge badgeContent="4" color="secondary">
+              <Badge badgeContent={totalItemCount} color="secondary">
                 <ShoppingCart />
               </Badge>
             </IconButton>

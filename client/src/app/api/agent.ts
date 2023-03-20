@@ -1,4 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
+import { useState } from 'react';
+import { BasketConfirm } from '../models/basket';
 // import { toast } from 'react-toastify';
 
 const sleep = () => new Promise((resolve) => setTimeout(resolve, 500));
@@ -7,40 +9,6 @@ axios.defaults.baseURL = 'http://localhost:5000/api/';
 axios.defaults.withCredentials = true;
 
 const responseBody = (response: AxiosResponse) => response.data;
-
-// axios.interceptors.response.use(
-//   async (response) => {
-//     await sleep();
-//     return response;
-//   },
-//   (error: AxiosError) => {
-//     const { data, status } = error.response as AxiosResponse;
-//     switch (status) {
-//       case 400:
-//         if (data.errors) {
-//           const modelStateErrors: string[] = [];
-//           for (const key in data.errors) {
-//             if (data.errors[key]) {
-//               modelStateErrors.push(data.errors[key]);
-//             }
-//           }
-//           throw modelStateErrors.flat();
-//         }
-//         toast.error(data.title);
-//         break;
-//       case 401:
-//         toast.error(data.title);
-//         break;
-//       case 500:
-//         toast.error(data.title);
-//         break;
-//       default:
-//         break;
-//     }
-
-//     return Promise.reject(error.response);
-//   }
-// );
 
 const requests = {
   get: (url: string) => axios.get(url).then(responseBody),
@@ -61,10 +29,26 @@ const TestErrors = {
   get500Error: () => requests.get('buggy/server-error'),
   getValidationError: () => requests.get('buggy/validation-error'),
 };
+// eslint-disable-next-line react-hooks/rules-of-hooks
+const [basketItems, setBasketItems] = useState<BasketConfirm[]>([]);
+// eslint-disable-next-line react-hooks/rules-of-hooks
+const [basketId, setBasketId] = useState<string>(
+  'AFACBFAC-A1EC-4754-B349-1DDA2B98FB21'
+);
 
 const Basket = {
-  get: () => requests.get('basket'),
-  // get: (basketId: string) => requests.get(`BasketItem?basketId=${basketId}`),
+  get: (basketId: string) => requests.get(`BasketItem?basketId=${basketId}`),
+  basketItems: (basketId: string) =>
+    requests
+      .get(`BasketItem?basketId=${basketId}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setBasketItems(data);
+      })
+      .catch((error) => {
+        console.log(error);
+        throw error;
+      }),
   addItem: (productId: number, quantity = 1) =>
     requests.post(`basket?productId=${productId}&quantity=${quantity}`, {}),
   removeItem: (productId: number, quantity = 1) =>

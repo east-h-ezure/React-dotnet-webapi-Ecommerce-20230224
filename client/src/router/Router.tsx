@@ -58,19 +58,6 @@ const Router = () => {
             <Route path="/contact" element={<Contact />} />
             <Route path="/catalog/:id" element={<ProductDetails />} />
             <Route path="/home" element={<HomePage />} />
-            {/* {basket !== null && (
-              <Route
-                path="/basket"
-                element={<AppBasket baskets={baskets} basket={basket} />}
-              />
-            )} */}
-            {/* <Route
-              path="/basket"
-              element={<AppBasket baskets={baskets} basket={basket} />}
-            /> */}
-            {/* {basket && (
-              <Route path="/basket" element={<AppBasket basket={basket} />} />
-            )} */}
             <Route path="/basket" element={<AppBasket />} />
           </Routes>
         </BrowserRouter>

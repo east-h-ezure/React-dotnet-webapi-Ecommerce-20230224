@@ -25,6 +25,7 @@ import { makeStyles, createStyles } from '@mui/styles';
 import Icon from '@mui/material/Icon';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import Loading from './app/layout/Loading';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -48,6 +49,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const AppBasket = () => {
   const classes = useStyles();
+  const [loading, setLoading] = useState(true);
   const [basketItems, setBasketItems] = useState<BasketConfirm[]>([]);
   const [basketId, setBasketId] = useState<string>(
     'AFACBFAC-A1EC-4754-B349-1DDA2B98FB21'
@@ -59,11 +61,24 @@ const AppBasket = () => {
         `https://localhost:5000/api/BasketItem?basketId=${basketId}`
       );
       setBasketItems(response.data);
+      setLoading(false);
     };
     fetchBasketItems();
   }, [basketId]);
 
+  // // const { basket } = useStoreContext();
+  // const itemCount = basketItems.reduce((sum, items))
+  // ステップ1
+  let totalItemCount = 0;
+
+  // ステップ2
+  basketItems.forEach((item) => {
+    totalItemCount += item.quantity;
+  });
+  console.log(totalItemCount);
+
   console.log(basketItems);
+  if (loading) return <Loading message="Loaging basket..." />;
 
   return (
     <Grid container spacing={1}>

@@ -2,7 +2,7 @@ import { createContext, PropsWithChildren, useContext, useState } from 'react';
 import { Basket } from '../models/basket';
 
 interface StoreContextValue {
-  removeItem: (productId: number, quantity: number) => void;
+  removeItem: (productId: number, quantity: number, userId: string) => void;
   setBasket: (basket: Basket) => void;
   basket: Basket | null;
 }
