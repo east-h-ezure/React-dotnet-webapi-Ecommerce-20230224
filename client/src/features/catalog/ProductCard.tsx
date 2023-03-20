@@ -20,6 +20,7 @@ import axios, { AxiosResponse } from 'axios';
 //import { useStoreContext } from '../../app/context/StoreContext';
 import { LoadingButton } from '@mui/lab';
 import config from '../../app/api/config';
+import { Basket, BasketConfirm } from '../../app/models/basket';
 
 interface Props {
   product: Product;
@@ -36,8 +37,10 @@ const StyledLink = styled(RouterLink)`
 
 const ProductCard = ({ product }: Props) => {
   const [loading, setLoading] = useState(false);
-  const usetId = 'aa';
+  const userId = 'aa';
   // const guid = 'AFACBFAC-A1EC-4754-B349-1DDA2B98FB21';
+  const [basket, setBasket] = useState<Basket[]>([]);
+  const [basketItem, setBasketItem] = useState<BasketConfirm[]>([]);
 
   const responseBody = (response: AxiosResponse) => response.data;
 
@@ -57,24 +60,62 @@ const ProductCard = ({ product }: Props) => {
       requests.del(`basket?productId=${productId}&quantity=${quantity}`),
   };
 
+  // const handleAddItem2 = async (productId: number, quantity = 1) => {
+  //   setLoading(true);
+  //   try {
+  //     // const token = 'your-auth-token';
+  //     const response = await fetch(
+  //       `${config.API_URL}Basket?productId=${productId}&quantity=${quantity}&userId=aa`,
+  //       // id=AFACBFAC-A1EC-4754-B349-1DDA2B98FB21`
+  //       {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //         mode: 'cors', // CORS設定を追加
+  //       }
+  //     );
+
+  //     const data = await response.json();
+  //     console.log(data);
+  //     setBasket(data);
+  //     setBasketItem(data.basketItems.map((item, index) => {
+
+  //     }));
+  //   } catch (error) {
+  //     console.error(error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
   const handleAddItem2 = async (productId: number, quantity = 1) => {
     setLoading(true);
     try {
-      // const token = 'your-auth-token';
       const response = await fetch(
         `${config.API_URL}Basket?productId=${productId}&quantity=${quantity}&userId=aa`,
-        // id=AFACBFAC-A1EC-4754-B349-1DDA2B98FB21`
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          mode: 'cors', // CORS設定を追加
+          mode: 'cors',
         }
       );
-
       const data = await response.json();
-      console.log(data);
+      const basketItems = data?.items?.map((item: BasketConfirm) => {
+        return {
+          basketId: item.basketId,
+          quantity: item.quantity,
+          product: item.product,
+        };
+      });
+      // const basket: Basket = {
+      //   userId: 'aa',
+      //   id: data?.id,
+      //   items: basketItems,
+      // };
+      // setBasket(basket);
+      setBasketItem(basketItems);
     } catch (error) {
       console.error(error);
     } finally {

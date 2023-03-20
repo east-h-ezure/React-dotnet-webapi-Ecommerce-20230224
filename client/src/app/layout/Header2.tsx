@@ -91,13 +91,25 @@ const Header = ({ handleThemeChange, darkMode }: Props) => {
     fetchBasketItems();
   }, [basketId]);
 
-  let totalItemCount = 0;
+  // let totalItemCount = 0;
 
-  // ステップ2
-  basketItems.forEach((item) => {
-    totalItemCount += item.quantity;
-  });
+  // // ステップ2
+  // basketItems.forEach((item) => {
+  //   totalItemCount += item.quantity;
+  // });
+  // console.log(totalItemCount);
+  const [totalItemCount, setTotalItemCount] = useState(0);
+  useEffect(() => {
+    let count = 0;
+    basketItems.forEach((item) => {
+      count += item.quantity;
+    });
+    setTotalItemCount(count);
+  }, [basketItems]);
+
   console.log(totalItemCount);
+
+  // 以下、JSXのコード
 
   if (loading) return <Loading />;
 
