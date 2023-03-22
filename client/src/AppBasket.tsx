@@ -113,6 +113,35 @@ const AppBasket = () => {
       window.location.reload();
     }
   };
+  const handleRemoveItem = async (productId: number, quantity = 1) => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `${config.API_URL}Basket?productId=${productId}&quantity=${quantity}&userId=aa`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          mode: 'cors',
+        }
+      );
+      const data = await response.json();
+      const basketItems = data?.items?.map((item: BasketConfirm) => {
+        return {
+          basketId: item.basketId,
+          quantity: item.quantity,
+          product: item.product,
+        };
+      });
+      setBasketItems(basketItems);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+      window.location.reload();
+    }
+  };
 
   return (
     <>
@@ -173,9 +202,12 @@ const AppBasket = () => {
                         <Typography variant="subtitle1" sx={{ width: 30 }}>
                           {item.quantity}
                         </Typography>
-                        <IconButton color="error">
+                        <LoadingButton
+                          loading={loading}
+                          onClick={() => handleRemoveItem(item.product.id)}
+                        >
                           <RemoveIcon />
-                        </IconButton>
+                        </LoadingButton>
                       </Box>
                     </TableCell>
                     <TableCell>{item.product.price * item.quantity}</TableCell>

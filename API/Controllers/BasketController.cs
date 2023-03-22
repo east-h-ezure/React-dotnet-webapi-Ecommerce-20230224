@@ -158,8 +158,10 @@ WHERE BasketId = @BasketId AND ProductId = @ProductId
             }
         }
 
+        //TODO: Guid生成できるようになったら引数追加
+        //Guid  id
         [HttpDelete]
-        public async Task<ActionResult> RemoveItem(int productId, int quantity, string userId, Guid id)
+        public async Task<ActionResult> RemoveItem(int productId, int quantity, string userId)
         {
             // DBの接続
             using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
@@ -170,14 +172,18 @@ WHERE BasketId = @BasketId AND ProductId = @ProductId
             try
             {
                 // 指定されたユーザーの買い物かごを取得
-                var basket = await connection.QuerySingleOrDefaultAsync<Basket>($@"
-SELECT * FROM Basket WHERE UserId = @UserId and Id = @Id",
-new { Id = id, UserId = userId }, transaction);
+                var basket = await connection.QuerySingleOrDefaultAsync<Basket>(
+                    //$@"
+//SELECT * FROM Basket WHERE UserId = @UserId and Id = @Id",
+//new { Id = id, UserId = userId }, transaction);
+                $@"SELECT* FROM Basket WHERE UserId = @UserId",
+new { UserId = userId }, transaction);
                 // 指定されたユーザーとBasketのIdのBasketItemを取得
                 var existItem = await connection.QuerySingleOrDefaultAsync<BasketItem>(
     $@"SELECT * FROM BasketItem WHERE
-                BasketId = @BasketId and ProductId = @ProductId",
-    new { ProductId = productId, BasketId = basket.Id }, transaction);
+                ProductId = @ProductId",
+    //new { ProductId = productId, BasketId = basket.Id }, transaction);
+                new { ProductId = productId }, transaction);
 
                 //アイテム数の再定義
                 var newQuantity = existItem.Quantity - quantity;
@@ -185,17 +191,24 @@ new { Id = id, UserId = userId }, transaction);
                 if(newQuantity <= 0)
                 {
                     // 変更後の量が0以下の場合、指定のbasketItemを削除する
+                    //connection.Execute(
+                    //    @"DELETE FROM BasketItem WHERE BasketId = @basketId AND ProductId = @productId",
+                    //    new { basketId = basket.Id, productId }, transaction);
                     connection.Execute(
-                        @"DELETE FROM BasketItem WHERE BasketId = @basketId AND ProductId = @productId",
-                        new { basketId = basket.Id, productId }, transaction);
+                       @"DELETE FROM BasketItem WHERE ProductId = @productId",
+                       new { productId }, transaction);
                 }
                 else
                 {
                     // 変更後のquantityが0以下ではない場合、指定のbasketItemの量をupdateする
-                    connection.Execute(
-    @"UPDATE BasketItem SET Quantity = @newQuantity WHERE BasketId = @basketId AND ProductId = @productId",
-    new { basketId = basket.Id, productId, newQuantity }, transaction);
-                }
+    //                connection.Execute(
+    //@"UPDATE BasketItem SET Quantity = @newQuantity WHERE BasketId = @basketId AND ProductId = @productId",
+    //new { basketId = basket.Id, productId, newQuantity }, transaction);
+    //            }
+                connection.Execute(
+@"UPDATE BasketItem SET Quantity = @newQuantity WHERE ProductId = @productId",
+new { productId, newQuantity }, transaction);
+            }
 
                 // トランザクションをコミットして、200 OK を返す
                 transaction.Commit();
