@@ -20,6 +20,8 @@ import { styled } from '@mui/material/styles';
 import { Add, Favorite, Remove } from '@mui/icons-material';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import { LoadingButton } from '@mui/lab';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 import { isTemplateExpression } from 'typescript';
 import { Basket, BasketConfirm, BasketItem } from '../../app/models/basket';
 
@@ -75,7 +77,7 @@ const ProductDetails = () => {
   // 初回レンダリング時に一度だけ実行
   useEffect(() => {
     fetchBasketItems();
-  }, []);
+  }, [basketId]);
   const item = basketItem?.find((i) => i.product.id === product?.id);
   useEffect(() => {
     if (item) setQuantity(item.quantity);
@@ -102,6 +104,50 @@ const ProductDetails = () => {
 
   console.log('quantity', quantity);
   console.log('basketItem', basketItem);
+
+  // const handleUpdateCart = (
+  //   productId: number,
+  //   quantity: number,
+  //   name: string
+  // ) => {
+  //   setSubmitting(true);
+  //   if (!item || quantity > item?.quantity) {
+  //     const updatedQuantity = item ? quantity - item.quantity : quantity;
+  //     try {
+  //       const response = fetch(
+  //         `https://localhost:5000/api/Basket?productId=${productId}&quantity=${updatedQuantity}&userId=aa`,
+  //         {
+  //           method: 'POST',
+  //           headers: {
+  //             'Content-Type': 'application/json',
+  //           },
+  //           mode: 'cors',
+  //         }
+  //       );
+  //       const data = response.json();
+  //       const basketItems = data?.items?.map((item: BasketConfirm) => {
+  //         return {
+  //           basketId: item.basketId,
+  //           quantity: item.quantity,
+  //           product: item.product,
+  //         };
+  //       });
+  //       setBasketItem(basketItems);
+  //       window.location.reload();
+  //     } catch (error) {
+  //       console.error(error);
+  //     } finally {
+  //       setSubmitting(false);
+  //       window.location.reload();
+  //     }
+  //   } else {
+  //     const updatedQuantity = item.quantity - quantity;
+  //     agent.Basket.removeItem(product?.id!, updatedQuantity)
+  //       .then(() => removeItem(product?.id!, updatedQuantity))
+  //       .catch((error) => console.log(error))
+  //       .finally(() => setSubmitting(false));
+  //   }
+  // };
 
   return (
     <div>
@@ -198,6 +244,7 @@ const ProductDetails = () => {
               if (item.product.id === product.id) {
                 return (
                   <Grid item xs={4}>
+                    {/* onClick={() => setQuantity(quantity + 1)} */}
                     <TextField
                       onChange={handleInputChage}
                       variant="outlined"
@@ -206,8 +253,25 @@ const ProductDetails = () => {
                       fullWidth
                       value={quantity}
                     />
+                    <Button
+                      // loading={status.loading}
+                      onClick={() => setQuantity(quantity - 1)}
+                    >
+                      <RemoveIcon
+                        sx={{ marginRight: 1, paddingTop: 1 }}
+                        color="error"
+                      />
+                    </Button>
+                    {quantity}
+                    <LoadingButton
+                      // loading={status.loading}
+                      onClick={() => setQuantity(quantity + 1)}
+                    >
+                      <AddIcon sx={{ marginLeft: 1, paddingTop: 1 }} />
+                    </LoadingButton>
                     <LoadingButton>
                       <Button
+                        //onClick={() => handleUpdateCart}
                         sx={{ height: '55px' }}
                         size="large"
                         variant="contained"
