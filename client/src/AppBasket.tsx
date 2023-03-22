@@ -30,6 +30,7 @@ import Loading from './app/layout/Loading';
 import config from './app/api/config';
 import { LoadingButton } from '@mui/lab';
 import { Product } from './product';
+import { Link } from 'react-router-dom';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -171,147 +172,16 @@ const AppBasket = () => {
 
   return (
     <>
-      <Grid container spacing={1}>
-        <Grid item xs={8}>
-          <Typography sx={{ marginTop: 3 }} variant="h4">
-            買い物かご
-          </Typography>
-          <TableContainer
-            component={Paper}
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              width: '100%',
-              marginTop: 10,
-            }}
-          >
-            <Table aria-label="simple table">
-              {/* sx={{ minWidth: 650 }} */}
-              <TableHead>
-                <TableRow>
-                  <TableCell align="right"></TableCell>
-                  <TableCell align="center">商品名</TableCell>
-                  <TableCell align="center">数量</TableCell>
-                  <TableCell align="center">価格</TableCell>
-                  <TableCell align="center">削除</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {basketItems.map((item) => (
-                  <TableRow
-                    key={item.basketId}
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">
-                      <Box display="flex" alignItems="center"></Box>
-                      <img
-                        className={classes.image}
-                        src={item.product.pictureUrl}
-                        alt={item.product.name}
-                        style={{ height: 50, marginRight: 29 }}
-                      />
-                    </TableCell>
-                    <TableCell>{item.product.name.trim()}</TableCell>
-                    {/* <TableCell>{item.quantity}</TableCell> */}
-                    <TableCell>
-                      <Box
-                        sx={{ '& > :not(style)': { m: 1 } }}
-                        className={classes.root}
-                      >
-                        {/* TODO */}
-                        <LoadingButton
-                          loading={
-                            status.loading &&
-                            status.name === 'add' + item.product.id
-                          }
-                          onClick={() =>
-                            handleAddItem(
-                              item.product.id,
-                              1,
-                              'add' + item.product.id
-                            )
-                          }
-                        >
-                          <AddIcon />
-                        </LoadingButton>
-                        <Typography variant="subtitle1" sx={{ width: 30 }}>
-                          {item.quantity}
-                        </Typography>
-                        <LoadingButton
-                          loading={
-                            status.loading &&
-                            status.name === 'add' + item.product.id
-                          }
-                          onClick={() =>
-                            handleRemoveItem(
-                              item.product.id,
-                              1,
-                              'rem' + item.product.id
-                            )
-                          }
-                        >
-                          <RemoveIcon />
-                        </LoadingButton>
-                      </Box>
-                    </TableCell>
-                    <TableCell>{item.product.price * item.quantity}</TableCell>
-                    <TableCell>
-                      <LoadingButton
-                        loading={
-                          status.loading &&
-                          status.name === 'add' + item.product.id
-                        }
-                        onClick={() =>
-                          handleRemoveItem(
-                            item.product.id,
-                            item.quantity,
-                            'rem' + item.product.id
-                          )
-                        }
-                      >
-                        <Button>
-                          <DeleteIcon color="error" />
-                        </Button>
-                      </LoadingButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Grid>
-        <Grid item xs={4} sx={{ position: 'relative' }}>
-          <CardContent sx={{ position: 'relative', top: 515 }}>
-            <Card>
-              <Typography variant="h6">
-                小計: <span>{amount}円</span>
-              </Typography>
-              <Typography variant="h6">送料: {postage}円</Typography>
-              {/* <div>5000以上で送料無料！</div> */}
-              <Typography variant="h6">合計: {amount + postage}円</Typography>
-              <Button
-                fullWidth
-                // sx={{ width: '80%', alignItems: 'center' }}
-                variant="contained"
-              >
-                チェックアウト
-              </Button>
-            </Card>
-          </CardContent>
-        </Grid>
-      </Grid>
-      <h1>ここから</h1>
-      <Grid container spacing={1} sx={{ display: 'flex' }}>
-        <TableContainer component={Paper} sx={{ width: '65%' }}>
+      <Grid container spacing={2} sx={{ display: 'flex' }}>
+        <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell></TableCell>
+                <TableCell align="right"></TableCell>
                 <TableCell>商品名</TableCell>
                 <TableCell align="right">価格</TableCell>
                 <TableCell align="center">数量</TableCell>
-                <TableCell align="right">小計</TableCell>
-                <TableCell align="right">削除</TableCell>
+                <TableCell align="center">削除</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -321,7 +191,7 @@ const AppBasket = () => {
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                 >
                   <TableCell component="th" scope="row">
-                    <Box display="flex" alignItems="center">
+                    <Box display="flex" alignItems="right">
                       <img
                         style={{ height: 50 }}
                         src={item.product.pictureUrl}
@@ -347,10 +217,7 @@ const AppBasket = () => {
                     {item.quantity}
                     <AddIcon sx={{ marginLeft: 1, paddingTop: 1 }} />
                   </TableCell>
-                  <TableCell align="right">
-                    {item.product.price * item.quantity}
-                  </TableCell>
-                  <TableCell align="right">
+                  <TableCell align="center">
                     <Button>
                       <DeleteIcon color="error" />
                     </Button>
@@ -360,7 +227,45 @@ const AppBasket = () => {
             </TableBody>
           </Table>
         </TableContainer>
-
+        <Grid container>
+          <Grid item xs={6} />
+          <Grid item xs={6}>
+            <TableContainer component={Paper} variant={'outlined'}>
+              <Table>
+                <TableBody>
+                  <TableRow>
+                    <TableCell colSpan={2}>小計</TableCell>
+                    <TableCell align="right">{amount}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell colSpan={2}>送料*</TableCell>
+                    <TableCell align="right">{postage}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell colSpan={2}>Total</TableCell>
+                    <TableCell align="right">{amount + postage}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>
+                      <span style={{ fontStyle: 'italic' }}>
+                        *5000円以上購入で送料無料になります
+                      </span>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <Button
+              component={Link}
+              to="/checkout"
+              variant="contained"
+              size="large"
+              fullWidth
+            >
+              レジに進む
+            </Button>
+          </Grid>
+        </Grid>
         {/* <Grid item xs={4} sx={{ position: 'relative' }}>
           <CardContent sx={{ position: 'relative', top: 515 }}></CardContent> */}
         <Box sx={{ position: 'relative' }}>
