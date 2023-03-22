@@ -210,17 +210,40 @@ const AppBasket = () => {
                     align="center"
                     sx={{ justifyContent: 'space-between' }}
                   >
-                    <RemoveIcon
-                      sx={{ marginRight: 1, paddingTop: 1 }}
-                      color="error"
-                    />
+                    <LoadingButton
+                      loading={status.loading}
+                      onClick={() =>
+                        handleRemoveItem(item.product.id, 1, item.product.name)
+                      }
+                    >
+                      <RemoveIcon
+                        sx={{ marginRight: 1, paddingTop: 1 }}
+                        color="error"
+                      />
+                    </LoadingButton>
                     {item.quantity}
-                    <AddIcon sx={{ marginLeft: 1, paddingTop: 1 }} />
+                    <LoadingButton
+                      loading={status.loading}
+                      onClick={() =>
+                        handleAddItem(item.product.id, 1, item.product.name)
+                      }
+                    >
+                      <AddIcon sx={{ marginLeft: 1, paddingTop: 1 }} />
+                    </LoadingButton>
                   </TableCell>
                   <TableCell align="center">
-                    <Button>
+                    <LoadingButton
+                      loading={status.loading}
+                      onClick={() =>
+                        handleAddItem(
+                          item.product.id,
+                          item.quantity,
+                          item.product.name
+                        )
+                      }
+                    >
                       <DeleteIcon color="error" />
-                    </Button>
+                    </LoadingButton>
                   </TableCell>
                 </TableRow>
               ))}

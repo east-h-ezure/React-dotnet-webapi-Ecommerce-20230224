@@ -13,11 +13,15 @@ import {
   TableCell,
   TableContainer,
   TableRow,
+  TextField,
   Typography,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Add, Favorite, Remove } from '@mui/icons-material';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import { LoadingButton } from '@mui/lab';
+import { isTemplateExpression } from 'typescript';
+import { Basket, BasketConfirm, BasketItem } from '../../app/models/basket';
 
 const StyledTypography = styled(Typography)({
   fontSize: 15,
@@ -39,16 +43,66 @@ const ProductDetails = () => {
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
-  const [quantity, setQuantity] = useState<any>(1);
+  const [quantity, setQuantity] = useState(0);
+  const [basketItem, setBasketItem] = useState<BasketConfirm[]>([]);
+  const [basketId, setBasketId] = useState<string>(
+    'AFACBFAC-A1EC-4754-B349-1DDA2B98FB21'
+  );
+  const [submitting, setSubmitting] = useState(false);
+  // const item = basketItem
+  //   .map((b) => b.product)
+  //   .find((i: BasketConfirm) => i.product?.id === product?.id);
+
+  // const quantityOfDetail = quantity ?? 0;
+  // console.log('item', item);
+  // console.log('QD', quantityOfDetail);
+
+  //console.log('item', item);
+  const items = basketItem.find((i) => i.product.id === product?.id);
+  console.log('items', items);
+
+  //quantity
+
+  //basketitemのget
+  const fetchBasketItems = async () => {
+    const response = await axios.get(
+      `https://localhost:5000/api/BasketItem?basketId=${basketId}`
+    );
+    setBasketItem(response.data);
+    setLoading(false);
+  };
+
+  // 初回レンダリング時に一度だけ実行
   useEffect(() => {
+    fetchBasketItems();
+  }, []);
+  const item = basketItem?.find((i) => i.product.id === product?.id);
+  useEffect(() => {
+    if (item) setQuantity(item.quantity);
+  }, [item]);
+
+  const handleInputChage = (event: any) => {
+    if (event.target.value > 0) {
+      setQuantity(parseInt(event.target.value));
+    }
+  };
+
+  useEffect(() => {
+    // if (item) setQuantity(item?.quantity);
     axios
       .get(`https://localhost:5000/api/products/${id}`)
       .then((res) => setProduct(res.data))
       .catch((error) => console.log(error))
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [id, item]);
+  console.log('item', item, id);
+
   if (loading) return <h3>Loading...</h3>;
   if (!product) return <h3>商品が見つかりません</h3>;
+
+  console.log('quantity', quantity);
+  console.log('basketItem', basketItem);
+
   return (
     <div>
       <Grid container spacing={6} sx={{ mt: 0.5 }}>
@@ -125,30 +179,6 @@ const ProductDetails = () => {
             商品について
           </Typography>
           <Typography variant="subtitle1">{product.description}</Typography>
-          <Grid sx={{ mt: 4, mb: 2 }} container>
-            <Grid item xs={5}>
-              <IconButton onClick={() => setQuantity(quantity - 1)}>
-                <Remove />
-              </IconButton>
-              <Input
-                type="number"
-                value={quantity}
-                onChange={(e) => setQuantity(parseInt(e.target.value))}
-                inputProps={{
-                  style: {
-                    textAlign: 'center',
-                    fontSize: 16,
-                    fontWeight: 'bold',
-                  },
-                  min: 1,
-                }}
-                sx={{ mx: 1 }}
-              />
-              <IconButton onClick={() => setQuantity(quantity + 1)}>
-                <Add />
-              </IconButton>
-            </Grid>
-          </Grid>
           <Grid
             sx={{
               display: 'flex',
@@ -164,15 +194,34 @@ const ProductDetails = () => {
                 {product.price * quantity}円
               </Typography>
             </Grid>
-            <Grid item xs={4}>
-              <Button
-                size="large"
-                variant="contained"
-                startIcon={<AddShoppingCartIcon />}
-              >
-                カートに追加
-              </Button>
-            </Grid>
+            {basketItem.map((item) => {
+              if (item.product.id === product.id) {
+                return (
+                  <Grid item xs={4}>
+                    <TextField
+                      onChange={handleInputChage}
+                      variant="outlined"
+                      type="number"
+                      //label="quantity in cart"
+                      fullWidth
+                      value={quantity}
+                    />
+                    <LoadingButton>
+                      <Button
+                        sx={{ height: '55px' }}
+                        size="large"
+                        variant="contained"
+                        startIcon={<AddShoppingCartIcon />}
+                      >
+                        {item ? 'カートの更新' : '商品の追加'}
+                      </Button>
+                    </LoadingButton>
+                  </Grid>
+                );
+              } else {
+                return null;
+              }
+            })}
           </Grid>
         </Grid>
       </Grid>

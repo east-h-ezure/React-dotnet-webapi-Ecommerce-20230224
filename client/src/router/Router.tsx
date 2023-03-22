@@ -18,6 +18,8 @@ import { getCookie } from '../app/util/util';
 // import agent from '../app/api/agent';
 // import { useStoreContext } from '../app/context/StoreContext';
 import Loading from '../app/layout/Loading';
+import { CheckOutlined } from '@mui/icons-material';
+import Checkout from '../features/checkout/Checkout';
 
 const Router = () => {
   // const { setBasket } = useStoreContext();
@@ -67,6 +69,7 @@ const Router = () => {
             <Route path="/catalog/:id" element={<ProductDetails />} />
             <Route path="/home" element={<HomePage />} />
             <Route path="/basket" element={<AppBasket />} />
+            <Route path="/ckeckout" element={<Checkout />} />
           </Routes>
         </BrowserRouter>
       </Container>
