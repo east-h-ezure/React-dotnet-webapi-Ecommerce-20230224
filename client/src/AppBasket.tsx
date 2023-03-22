@@ -25,6 +25,7 @@ import { makeStyles, createStyles } from '@mui/styles';
 import Icon from '@mui/material/Icon';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import DeleteIcon from '@mui/icons-material/Delete';
 import Loading from './app/layout/Loading';
 import config from './app/api/config';
 import { LoadingButton } from '@mui/lab';
@@ -52,7 +53,10 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const AppBasket = () => {
   const classes = useStyles();
-  const [loading, setLoading] = useState(true);
+  const [status, setStatus] = useState({
+    loading: true,
+    name: '',
+  });
   const [basketItems, setBasketItems] = useState<BasketConfirm[]>([]);
   const [basketId, setBasketId] = useState<string>(
     'AFACBFAC-A1EC-4754-B349-1DDA2B98FB21'
@@ -64,7 +68,7 @@ const AppBasket = () => {
         `https://localhost:5000/api/BasketItem?basketId=${basketId}`
       );
       setBasketItems(response.data);
-      setLoading(false);
+      setStatus({ loading: false, name: '' });
     };
     fetchBasketItems();
   }, [basketId]);
@@ -81,10 +85,28 @@ const AppBasket = () => {
   console.log(totalItemCount);
 
   console.log(basketItems);
-  if (loading) return <Loading message="Loaging basket..." />;
 
-  const handleAddItem = async (productId: number, quantity = 1) => {
-    setLoading(true);
+  //小計
+  let amount = 0;
+  basketItems.forEach((item) => {
+    amount += item.product.price * item.quantity;
+  });
+  console.log(amount);
+  let postage = 0;
+  if (amount >= 5000) {
+    postage = 0;
+  } else {
+    postage = 500;
+  }
+  console.log(postage);
+  if (status.loading) return <Loading message="Loaging basket..." />;
+
+  const handleAddItem = async (
+    productId: number,
+    quantity = 1,
+    name: string
+  ) => {
+    setStatus({ loading: true, name: name });
     try {
       const response = await fetch(
         `${config.API_URL}Basket?productId=${productId}&quantity=${quantity}&userId=aa`,
@@ -109,12 +131,16 @@ const AppBasket = () => {
     } catch (error) {
       console.error(error);
     } finally {
-      setLoading(false);
+      setStatus({ loading: false, name: '' });
       window.location.reload();
     }
   };
-  const handleRemoveItem = async (productId: number, quantity = 1) => {
-    setLoading(true);
+  const handleRemoveItem = async (
+    productId: number,
+    quantity = 1,
+    name: string
+  ) => {
+    setStatus({ loading: true, name });
     try {
       const response = await fetch(
         `${config.API_URL}Basket?productId=${productId}&quantity=${quantity}&userId=aa`,
@@ -138,7 +164,7 @@ const AppBasket = () => {
     } catch (error) {
       console.error(error);
     } finally {
-      setLoading(false);
+      setStatus({ loading: false, name: '' });
       window.location.reload();
     }
   };
@@ -194,8 +220,17 @@ const AppBasket = () => {
                       >
                         {/* TODO */}
                         <LoadingButton
-                          loading={loading}
-                          onClick={() => handleAddItem(item.product.id)}
+                          loading={
+                            status.loading &&
+                            status.name === 'add' + item.product.id
+                          }
+                          onClick={() =>
+                            handleAddItem(
+                              item.product.id,
+                              1,
+                              'add' + item.product.id
+                            )
+                          }
                         >
                           <AddIcon />
                         </LoadingButton>
@@ -203,8 +238,17 @@ const AppBasket = () => {
                           {item.quantity}
                         </Typography>
                         <LoadingButton
-                          loading={loading}
-                          onClick={() => handleRemoveItem(item.product.id)}
+                          loading={
+                            status.loading &&
+                            status.name === 'add' + item.product.id
+                          }
+                          onClick={() =>
+                            handleRemoveItem(
+                              item.product.id,
+                              1,
+                              'rem' + item.product.id
+                            )
+                          }
                         >
                           <RemoveIcon />
                         </LoadingButton>
@@ -212,7 +256,23 @@ const AppBasket = () => {
                     </TableCell>
                     <TableCell>{item.product.price * item.quantity}</TableCell>
                     <TableCell>
-                      <Button>削除</Button>
+                      <LoadingButton
+                        loading={
+                          status.loading &&
+                          status.name === 'add' + item.product.id
+                        }
+                        onClick={() =>
+                          handleRemoveItem(
+                            item.product.id,
+                            item.quantity,
+                            'rem' + item.product.id
+                          )
+                        }
+                      >
+                        <Button>
+                          <DeleteIcon color="error" />
+                        </Button>
+                      </LoadingButton>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -224,11 +284,11 @@ const AppBasket = () => {
           <CardContent sx={{ position: 'relative', top: 515 }}>
             <Card>
               <Typography variant="h6">
-                小計: <span>〇円</span>
+                小計: <span>{amount}円</span>
               </Typography>
-              <Typography variant="h6">送料: 〇円</Typography>
+              <Typography variant="h6">送料: {postage}円</Typography>
               {/* <div>5000以上で送料無料！</div> */}
-              <Typography variant="h6">合計: 〇円</Typography>
+              <Typography variant="h6">合計: {amount + postage}円</Typography>
               <Button
                 fullWidth
                 // sx={{ width: '80%', alignItems: 'center' }}
@@ -280,14 +340,21 @@ const AppBasket = () => {
                     align="center"
                     sx={{ justifyContent: 'space-between' }}
                   >
-                    <RemoveIcon sx={{ marginRight: 1 }} color="error" />
+                    <RemoveIcon
+                      sx={{ marginRight: 1, paddingTop: 1 }}
+                      color="error"
+                    />
                     {item.quantity}
-                    <AddIcon sx={{ marginRight: 1 }} />
+                    <AddIcon sx={{ marginLeft: 1, paddingTop: 1 }} />
                   </TableCell>
                   <TableCell align="right">
-                    ${((item.product.price / 100) * item.quantity).toFixed(2)}
+                    {item.product.price * item.quantity}
                   </TableCell>
-                  <TableCell align="right">削除</TableCell>
+                  <TableCell align="right">
+                    <Button>
+                      <DeleteIcon color="error" />
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -299,11 +366,11 @@ const AppBasket = () => {
         <Box sx={{ position: 'relative' }}>
           <Box sx={{ position: 'relative', top: 515 }}>
             <Typography variant="h6">
-              小計: <span>〇円</span>
+              小計: <span>{amount}円</span>
             </Typography>
-            <Typography variant="h6">送料: 〇円</Typography>
+            <Typography variant="h6">送料: {postage}円</Typography>
             {/* <div>5000以上で送料無料！</div> */}
-            <Typography variant="h6">合計: 〇円</Typography>
+            <Typography variant="h6">合計: {amount + postage}円</Typography>
             <Button
               fullWidth
               // sx={{ width: '80%', alignItems: 'center' }}
