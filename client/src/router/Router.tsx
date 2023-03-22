@@ -14,7 +14,7 @@ import ProductDetails from '../features/catalog/ProductDetails';
 import { Product } from '../product';
 import { Basket, BasketConfirm } from '../app/models/basket';
 import AppBasket from '../AppBasket';
-import { getCookie } from '../app/util/util';
+// import { getCookie } from '../app/util/util';
 // import agent from '../app/api/agent';
 // import { useStoreContext } from '../app/context/StoreContext';
 import Loading from '../app/layout/Loading';

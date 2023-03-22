@@ -11,7 +11,7 @@ import {
 import { useEffect, useState } from 'react';
 import Header2 from './app/layout/Header2';
 // import { getCookie } from './app/util/util';
-import agent from './app/api/agent';
+// import agent from './app/api/agent';
 import Loading from './app/layout/Loading';
 
 const App = () => {

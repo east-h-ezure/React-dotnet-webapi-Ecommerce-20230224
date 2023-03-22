@@ -21,7 +21,7 @@ import { styled } from '@mui/material/styles';
 import { CSSObject } from '@mui/system';
 import { Link } from 'react-router-dom';
 import { ShoppingCart } from '@mui/icons-material';
-import agent from '../api/agent';
+// import agent from '../api/agent';
 import Loading from './Loading';
 import { BasketConfirm } from '../models/basket';
 import axios from 'axios';
