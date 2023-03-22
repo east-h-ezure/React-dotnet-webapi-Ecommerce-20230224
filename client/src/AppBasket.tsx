@@ -268,14 +268,14 @@ const AppBasket = () => {
         </Grid>
         {/* <Grid item xs={4} sx={{ position: 'relative' }}>
           <CardContent sx={{ position: 'relative', top: 515 }}></CardContent> */}
-        <Box sx={{ position: 'relative' }}>
+        {/* <Box sx={{ position: 'relative' }}>
           <Box sx={{ position: 'relative', top: 515 }}>
             <Typography variant="h6">
               小計: <span>{amount}円</span>
             </Typography>
             <Typography variant="h6">送料: {postage}円</Typography>
             {/* <div>5000以上で送料無料！</div> */}
-            <Typography variant="h6">合計: {amount + postage}円</Typography>
+        {/* <Typography variant="h6">合計: {amount + postage}円</Typography>
             <Button
               fullWidth
               // sx={{ width: '80%', alignItems: 'center' }}
@@ -284,7 +284,7 @@ const AppBasket = () => {
               チェックアウト
             </Button>
           </Box>
-        </Box>
+        </Box> */}
       </Grid>
     </>
   );
