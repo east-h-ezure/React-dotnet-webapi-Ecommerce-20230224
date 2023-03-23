@@ -3,13 +3,13 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import Router from './router/Router';
-import { configureStore } from './app/store/configureStore.1';
+import { store } from './app/store/configureStore.1';
 import { StoreProvider } from './app/context/StoreContext';
 import { Provider } from 'react-redux';
 import Contact from './features/contact/Contact';
 
-const store = configureStore();
-console.log('getState', store.getState());
+// const store = configureStore();
+// console.log('getState', store.getState());
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
