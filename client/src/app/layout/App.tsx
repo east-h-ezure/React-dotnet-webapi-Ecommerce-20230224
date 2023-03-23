@@ -1,7 +1,6 @@
-import './App.css';
-import { Product } from './product';
-import Catalog from './features/catalog/Catalog';
-import Header from './app/layout/Header';
+import { Product } from '../../product';
+import Catalog from '../../features/catalog/Catalog';
+import Header from './Header';
 import {
   Container,
   createTheme,
@@ -9,10 +8,11 @@ import {
   ThemeProvider,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import Header2 from './app/layout/Header2';
+import Header2 from './Header2';
 // import { getCookie } from './app/util/util';
 // import agent from './app/api/agent';
-import Loading from './app/layout/Loading';
+import Loading from './Loading';
+import { BasketConfirm } from '../models/basket';
 
 const App = () => {
   const [loading, setLoading] = useState(true);
@@ -26,6 +26,21 @@ const App = () => {
       mode: paletteType,
     },
   });
+
+  const [basketItems, setBasketItems] = useState<BasketConfirm[]>([]);
+  // const [basket, setBasket] = useState<BasketConfirm | null>(null);
+
+  const handleThemeChange = () => {
+    setDarkMode(!darkMode);
+  };
+  // ステップ1
+  let totalItemCount = 0;
+
+  // ステップ2
+  basketItems.forEach((item) => {
+    totalItemCount += item.quantity;
+  });
+  console.log(totalItemCount);
 
   return (
     <div>

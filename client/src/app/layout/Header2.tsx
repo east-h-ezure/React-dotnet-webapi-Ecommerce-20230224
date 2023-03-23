@@ -19,7 +19,7 @@ import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import { styled } from '@mui/material/styles';
 import { CSSObject } from '@mui/system';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { ShoppingCart } from '@mui/icons-material';
 // import agent from '../api/agent';
 import Loading from './Loading';
@@ -121,7 +121,14 @@ const Header = ({ handleThemeChange, darkMode }: Props) => {
           >
             <MenuIcon />
           </IconButton>
-          <Typography sx={{ ml: 3 }} variant="h5" noWrap>
+
+          <Typography
+            sx={{ ml: 3 }}
+            variant="h5"
+            noWrap
+            component={NavLink}
+            to="/"
+          >
             B-LUXE
           </Typography>
           <Switch checked={darkMode} onChange={handleThemeChange} />
@@ -161,21 +168,27 @@ const Header = ({ handleThemeChange, darkMode }: Props) => {
           <ListItem>
             <ListItemIcon>
               <InboxIcon />
-              <Link to="/">メニュー</Link>
+              <Typography component={NavLink} to="/">
+                メニュー
+              </Typography>
             </ListItemIcon>
             <ListItemText />
           </ListItem>
           <ListItem>
             <ListItemIcon>
               <InboxIcon />
-              <Link to="/home">Home</Link>
+              <Typography component={NavLink} to="/home">
+                Home
+              </Typography>
             </ListItemIcon>
             <ListItemText />
           </ListItem>
           <ListItem>
             <ListItemIcon>
               <InboxIcon />
-              <Link to="/contact">問合せ</Link>
+              <Typography component={NavLink} to="/contact">
+                問合せ
+              </Typography>
             </ListItemIcon>
             <ListItemText />
           </ListItem>

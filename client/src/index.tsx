@@ -1,19 +1,27 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
-import ContactPage from './features/contact/Contact';
 import Router from './router/Router';
-import { Basket } from './app/models/basket';
+import { configureStore } from './app/store/configureStore.1';
+import { StoreProvider } from './app/context/StoreContext';
+import { Provider } from 'react-redux';
+import Contact from './features/contact/Contact';
+
+const store = configureStore();
+console.log('getState', store.getState());
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <>
-    <Router />
+    {/* <StoreProvider> */}
+    <Provider store={store}>
+      {/* <Contact /> */}
+      <Router />
+    </Provider>
+    {/* </StoreProvider> */}
   </>
 );
 

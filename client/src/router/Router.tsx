@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import App from '../App';
+import App from '../app/layout/App';
 import Header2 from '../app/layout/Header2';
 import HomePage from '../features/home/HomePage';
 import ProductDetails from '../features/catalog/ProductDetails';
@@ -69,7 +69,7 @@ const Router = () => {
             <Route path="/catalog/:id" element={<ProductDetails />} />
             <Route path="/home" element={<HomePage />} />
             <Route path="/basket" element={<AppBasket />} />
-            <Route path="/ckeckout" element={<Checkout />} />
+            <Route path="/checkout" element={<Checkout />} />
           </Routes>
         </BrowserRouter>
       </Container>
