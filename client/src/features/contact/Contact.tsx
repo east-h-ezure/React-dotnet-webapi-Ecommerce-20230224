@@ -1,9 +1,5 @@
 import { Typography } from '@mui/material';
-import {
-  CounterState,
-  DECREMENT_COUNTER,
-  INCREMENT_COUNTER,
-} from './couterReducer';
+import { CounterState, decrement, increment } from './couterReducer';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, ButtonGroup } from '@mui/material';
 
@@ -18,18 +14,25 @@ const Contact = () => {
       <Typography variant="h5">The data is {data}</Typography>
       <ButtonGroup>
         <Button
-          onClick={() => dispatch({ type: DECREMENT_COUNTER })}
+          onClick={() => dispatch(decrement())}
           variant="contained"
           color="error"
         >
           Decrement
         </Button>
         <Button
-          onClick={() => dispatch({ type: INCREMENT_COUNTER })}
+          onClick={() => dispatch(increment())}
           variant="contained"
           color="primary"
         >
           Increment
+        </Button>
+        <Button
+          onClick={() => dispatch(increment(5))}
+          variant="contained"
+          color="secondary"
+        >
+          Increment by 5
         </Button>
       </ButtonGroup>
     </>
