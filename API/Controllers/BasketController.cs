@@ -1,8 +1,13 @@
-﻿using API.Dtos;
+﻿using API.DTOs;
+using API.Models;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration.UserSecrets;
 using System.Data.SqlClient;
+using Product = API.Models.Product;
+using AutoMapper;
+using System.Data;
+using System.Transactions;
 
 namespace API.Controllers
 {
@@ -16,38 +21,80 @@ namespace API.Controllers
         {
             _config = config;
         }
+       
 
-        [HttpGet(Name = "GetBasket")]
-        public async Task<ActionResult<Basket>> GetBasket()
+
+        [HttpGet]
+        public async Task<ActionResult<List<BasketDto>>> GetBasketItem(int basketId)
         {
+            // データベース接続用の SqlConnection オブジェクトを作成し、OpenAsync メソッドで接続します
             using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
-            var basket = await connection.QueryFirstOrDefaultAsync<Basket>(
-                   $@"
-        SELECT 
-            Basket.Id as BasketId, 
-            Basket.UserId, 
-            BasketItem.BasketId as BasketId, 
-            BasketItem.ProductId as ProductId,
-            Product.Name as ProductName, 
-            Product.Price as ProductPrice, 
-            Product.Description as ProductDescription
-        FROM Basket
-        LEFT JOIN BasketItem ON Basket.Id = BasketItem.BasketId
-        LEFT JOIN Product ON BasketItem.ProductId = Product.Id"
-                   );
+            await connection.OpenAsync();
 
-            if (basket == null)
+            // トランザクションを開始します
+            var transaction = connection.BeginTransaction();
+            try
             {
-                return NotFound();
+                var lookup = new Dictionary<int, BasketDto>();
+
+            var sql = @$"SELECT b.*, bi.*, p.Name, p.*
+                FROM BasketItem AS bi
+                INNER JOIN Basket AS b ON b.Id = bi.BasketId
+                INNER JOIN Product AS p ON p.Id = bi.ProductId
+                WHERE b.Id = @BasketId";
+
+            var result = await connection.QueryAsync<BasketDto, BasketItemDto, BasketDto>(
+                sql,
+                (basket, basketItem) =>
+                {
+                    if (!lookup.TryGetValue(basket.Id, out BasketDto basketDto))
+                    {
+                        basketDto = basket;
+                        basketDto.Items = new List<BasketItemDto>();
+                        lookup.Add(basket.Id, basketDto);
+                    }
+
+                    var item = new BasketItemDto
+                    {
+                        ProductId = basketItem.ProductId,
+                        Name = basketItem.Name,
+                        Price = basketItem.Price,
+                        PictureUrl = basketItem.PictureUrl,
+                        Brand = basketItem.Brand,
+                        Type = basketItem.Type,
+                        Quantity = basketItem.Quantity
+                    };
+
+                    basketDto.Items.Add(item);
+
+                    return basketDto;
+                },
+                new { BasketId = basketId },
+            splitOn: "ProductId",
+                transaction: transaction,
+                commandType: CommandType.Text
+            );
+
+
+            return result.ToList();
+                //return result.ToList();
+                //return res;
             }
-            //return CreatedAtRoute("GetBasket", MapBasketToDto(basket));
-            return Ok(basket);
+            catch
+            {
+                // トランザクションをロールバックする
+                transaction.Rollback();
+                throw;
+            }
+
         }
 
-            [HttpPost]
-            //TODO: Guid生成できるようになったら引数追加
-            //Guid  id
-        public async Task<ActionResult<Basket>> AddItemToBasket(int productId, int quantity, string userId)
+
+
+        [HttpPost]
+        //TODO: Guid生成できるようになったら引数追加
+        //Guid  id
+        public async Task<ActionResult<Basket>> AddItemToBasket(int productId, int quantity, string buyerId)
         {
             // データベース接続用の SqlConnection オブジェクトを作成し、OpenAsync メソッドで接続します
             using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
@@ -67,9 +114,9 @@ namespace API.Controllers
                 //ひとまずベタ打ち
 
                 var basket = await connection.QuerySingleOrDefaultAsync<Basket>(@$"
-SELECT * FROM Basket WHERE UserId = @UserId
-",
-new { UserId = userId }, transaction);
+        SELECT * FROM Basket WHERE BuyerId = @BuyerId
+        ",
+new { BuyerId = buyerId }, transaction);
                 //TODO: guid生成したら条件追加
                 //Id = @Id
 
@@ -81,9 +128,9 @@ new { UserId = userId }, transaction);
                 // 取得できなかった場合は、新しいバスケットを作成します
                 if (basket == null)
                 {
-                    basket = new Basket() { Id = basket.Id, UserId = basket.UserId, Items = basket.Items };
+                    basket = new Basket() { Id = basket.Id, BuyerId = basket.BuyerId, Items = basket.Items };
 
-                    await connection.ExecuteAsync("INSERT INTO Basket (Id, UserId) VALUES (@Id, @UserId)", basket, transaction);
+                    await connection.ExecuteAsync("INSERT INTO Basket (Id, BuyerId) VALUES (@Id, @BuyerId)", basket, transaction);
                     //修正後
                     // insert Basket
                     // USerId = 'a', Id = 'AFACBFAC-A1EC-4754-B349-1DDA2B98FB21'
@@ -109,18 +156,18 @@ new { UserId = userId }, transaction);
                 //
                 var existItem = await connection.QuerySingleOrDefaultAsync<BasketItem>(
                     $@"SELECT * FROM BasketItem WHERE
-                BasketId = @BasketId and ProductId = @ProductId",
-                    new { ProductId = productId, BasketId = basket.Id}, transaction);
+                        BasketId = @BasketId and ProductId = @ProductId",
+                    new { ProductId = productId, BasketId = basket.Id }, transaction);
 
                 if (existItem != null)
                 {
                     existItem.Quantity += quantity;
                     await connection.ExecuteAsync($@"
-UPDATE BasketItem
-SET
-Quantity = @Quantity
-WHERE BasketId = @BasketId AND ProductId = @ProductId
-", new { Quantity = existItem.Quantity, BasketId = basket.Id, ProductId = productId }, transaction);
+        UPDATE BasketItem
+        SET
+        Quantity = @Quantity
+        WHERE BasketId = @BasketId AND ProductId = @ProductId
+        ", new { Quantity = existItem.Quantity, BasketId = basket.Id, ProductId = productId }, transaction);
                 }
                 // 既存の商品がない場合は、新しい商品を追加します
                 else
@@ -136,6 +183,7 @@ WHERE BasketId = @BasketId AND ProductId = @ProductId
                         //Brand = product.Brand,
                         //Type = product.Type,
                     };
+
                     var basketItem = await connection.QuerySingleOrDefaultAsync<BasketItem>(
                         $@"SELECT * FROM BasketItem WHERE BasketId = @BasketId and ProductId = @ProductId",
                         new { BasketId = basket.Id, ProductId = productId }, transaction);
@@ -160,8 +208,8 @@ WHERE BasketId = @BasketId AND ProductId = @ProductId
 
         //TODO: Guid生成できるようになったら引数追加
         //Guid  id
-        [HttpDelete]
-        public async Task<ActionResult> RemoveItem(int productId, int quantity, string userId)
+                [HttpDelete]
+                public async Task<ActionResult> RemoveItem(int productId, int quantity, string buyerId)
         {
             // DBの接続
             using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
@@ -173,22 +221,22 @@ WHERE BasketId = @BasketId AND ProductId = @ProductId
             {
                 // 指定されたユーザーの買い物かごを取得
                 var basket = await connection.QuerySingleOrDefaultAsync<Basket>(
-                    //$@"
-//SELECT * FROM Basket WHERE UserId = @UserId and Id = @Id",
-//new { Id = id, UserId = userId }, transaction);
-                $@"SELECT* FROM Basket WHERE UserId = @UserId",
-new { UserId = userId }, transaction);
+                //$@"
+                //SELECT * FROM Basket WHERE UserId = @UserId and Id = @Id",
+                //new { Id = id, UserId = userId }, transaction);
+                $@"SELECT* FROM Basket WHERE BuyerId = @BuyerId",
+new { BuyerId = buyerId }, transaction);
                 // 指定されたユーザーとBasketのIdのBasketItemを取得
                 var existItem = await connection.QuerySingleOrDefaultAsync<BasketItem>(
     $@"SELECT * FROM BasketItem WHERE
-                ProductId = @ProductId",
-    //new { ProductId = productId, BasketId = basket.Id }, transaction);
+                        ProductId = @ProductId",
+                //new { ProductId = productId, BasketId = basket.Id }, transaction);
                 new { ProductId = productId }, transaction);
 
                 //アイテム数の再定義
                 var newQuantity = existItem.Quantity - quantity;
 
-                if(newQuantity <= 0)
+                if (newQuantity <= 0)
                 {
                     // 変更後の量が0以下の場合、指定のbasketItemを削除する
                     //connection.Execute(
@@ -201,14 +249,14 @@ new { UserId = userId }, transaction);
                 else
                 {
                     // 変更後のquantityが0以下ではない場合、指定のbasketItemの量をupdateする
-    //                connection.Execute(
-    //@"UPDATE BasketItem SET Quantity = @newQuantity WHERE BasketId = @basketId AND ProductId = @productId",
-    //new { basketId = basket.Id, productId, newQuantity }, transaction);
-    //            }
-                connection.Execute(
-@"UPDATE BasketItem SET Quantity = @newQuantity WHERE ProductId = @productId",
-new { productId, newQuantity }, transaction);
-            }
+                    //                connection.Execute(
+                    //@"UPDATE BasketItem SET Quantity = @newQuantity WHERE BasketId = @basketId AND ProductId = @productId",
+                    //new { basketId = basket.Id, productId, newQuantity }, transaction);
+                    //            }
+                    connection.Execute(
+    @"UPDATE BasketItem SET Quantity = @newQuantity WHERE ProductId = @productId",
+    new { productId, newQuantity }, transaction);
+                }
 
                 // トランザクションをコミットして、200 OK を返す
                 transaction.Commit();

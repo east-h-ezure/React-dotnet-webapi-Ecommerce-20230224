@@ -23,8 +23,9 @@ import { Link, NavLink } from 'react-router-dom';
 import { ShoppingCart } from '@mui/icons-material';
 // import agent from '../api/agent';
 import Loading from './Loading';
-import { BasketConfirm } from '../models/basket';
+import { BasketItem } from '../models/basket';
 import axios from 'axios';
+import { useAppDispatch, useAppSelector } from '../store/configureStore.1';
 
 // スタイルの定義
 const drawerWidth = 240;
@@ -58,6 +59,7 @@ interface Props {
 }
 
 const Header = ({ handleThemeChange, darkMode }: Props) => {
+  const { basketItem } = useAppSelector((state) => state.basketItem);
   const [loading, setLoading] = useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -75,7 +77,7 @@ const Header = ({ handleThemeChange, darkMode }: Props) => {
       color: 'text.secondary',
     },
   };
-  const [basketItems, setBasketItems] = useState<BasketConfirm[]>([]);
+  const [basketItems, setBasketItems] = useState<BasketItem[]>([]);
   const [basketId, setBasketId] = useState<string>(
     'AFACBFAC-A1EC-4754-B349-1DDA2B98FB21'
   );
@@ -95,11 +97,12 @@ const Header = ({ handleThemeChange, darkMode }: Props) => {
   const [totalItemCount, setTotalItemCount] = useState(0);
   useEffect(() => {
     let count = 0;
-    basketItems.forEach((item) => {
+    basketItem?.forEach((item) => {
       count += item.quantity;
     });
     setTotalItemCount(count);
-  }, [basketItems]);
+  }, [basketItem]);
+  console.log('basketItem', basketItem);
 
   if (loading) return <Loading />;
 

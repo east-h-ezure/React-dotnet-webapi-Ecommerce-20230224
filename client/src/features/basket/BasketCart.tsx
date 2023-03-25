@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { BasketConfirm } from '../../app/models/basket';
+import { useStoreContext } from '../../app/context/StoreContext';
+import { BasketItem } from '../../app/models/basket';
+import { useAppDispatch } from '../../app/store/configureStore.1';
 interface Props {
-  baskets: BasketConfirm[];
-  basket: BasketConfirm;
+  baskets: BasketItem[];
+  basket: BasketItem;
 }
 
 const BasketCart = ({ basket, baskets }: Props) => {
-  const [basketItems, setBasketItems] = useState<BasketConfirm[]>([]);
+  const [basketItems, setBasketItems] = useState<BasketItem[]>([]);
+  //Reduxテスト
+  // const { setBasket } = useStoreContext();
+  const [basketId, setBasketId] = useState(1);
 
   useEffect(() => {
-    fetch(`https://localhost:5000/api/basketitem?basketId=${basket.basketId}`, {
+    fetch(`https://localhost:5000/api/basket?basketId=${basketId}`, {
       mode: 'cors',
     })
       .then((response) => response.json())
@@ -23,9 +28,16 @@ const BasketCart = ({ basket, baskets }: Props) => {
 
   return (
     <div>
+      <div>BasketItem</div>
       {basketItems.map((item) => (
-        <div key={item.basketId}>{item.quantity}</div>
+        <div key={item.productId}>{item.quantity}</div>
       ))}
+      {/* <div>Basket</div>
+      {basket.product.map((i) => (
+      <div>
+        {i.name}
+      </div>
+        ))} */}
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { useState } from 'react';
-import { BasketConfirm } from '../models/basket';
+import { BasketItem } from '../models/basket';
 // import { toast } from 'react-toastify';
 
 const sleep = () => new Promise((resolve) => setTimeout(resolve, 500));
@@ -30,17 +30,19 @@ const TestErrors = {
   getValidationError: () => requests.get('buggy/validation-error'),
 };
 // eslint-disable-next-line react-hooks/rules-of-hooks
-const [basketItems, setBasketItems] = useState<BasketConfirm[]>([]);
+const [basketItems, setBasketItems] = useState<BasketItem[]>([]);
 // eslint-disable-next-line react-hooks/rules-of-hooks
-const [basketId, setBasketId] = useState<string>(
-  'AFACBFAC-A1EC-4754-B349-1DDA2B98FB21'
-);
+// const [basketId, setBasketId] = useState<string>(
+//   'AFACBFAC-A1EC-4754-B349-1DDA2B98FB21'
+// );
+// eslint-disable-next-line react-hooks/rules-of-hooks
+const [basketId, setBasketId] = useState<number>(1);
 
 const Basket = {
-  get: (basketId: string) => requests.get(`BasketItem?basketId=${basketId}`),
+  get: (basketId: string) => requests.get(`Basket?basketId=${basketId}`),
   basketItems: (basketId: string) =>
     requests
-      .get(`BasketItem?basketId=${basketId}`)
+      .get(`Basket?basketId=${basketId}`)
       .then((response) => response.json())
       .then((data) => {
         setBasketItems(data);

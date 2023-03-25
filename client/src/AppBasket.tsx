@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { BasketConfirm } from './app/models/basket';
+import { BasketItem } from './app/models/basket';
 import {
   Box,
   Button,
@@ -29,8 +29,11 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Loading from './app/layout/Loading';
 import config from './app/api/config';
 import { LoadingButton } from '@mui/lab';
-import { Product } from './product';
+import { Product } from './app/models/product';
 import { Link } from 'react-router-dom';
+import { useStoreContext } from './app/context/StoreContext';
+import { useAppDispatch } from './app/store/configureStore.1';
+import { setBasketItem } from './features/basket/basketSlice';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -58,18 +61,34 @@ const AppBasket = () => {
     loading: true,
     name: '',
   });
-  const [basketItems, setBasketItems] = useState<BasketConfirm[]>([]);
-  const [basketId, setBasketId] = useState<string>(
-    'AFACBFAC-A1EC-4754-B349-1DDA2B98FB21'
-  );
+  const [basketItems, setBasketItems] = useState<BasketItem[]>([]);
+  // const [basketId, setBasketId] = useState<string>(
+  //   'AFACBFAC-A1EC-4754-B349-1DDA2B98FB21'
+  // );
+  const [basketId, setBasketId] = useState<number>(1);
+  // const dispatch = useAppDispatch();
 
+  // useEffect(() => {
+  //   const fetchBasketItems = async () => {
+  //     const response = await axios.get(
+  //       `https://localhost:5000/api/Basket?basketId=${basketId}`
+  //     );
+  //     // setBasketItems(response.data);
+  //     dispatch(setBasketItem(response.data));
+  //     setStatus({ loading: false, name: '' });
+  //     console.log(setBasketItem);
+  //   };
+  //   fetchBasketItems();
+  // }, [basketId, dispatch]);
   useEffect(() => {
     const fetchBasketItems = async () => {
       const response = await axios.get(
-        `https://localhost:5000/api/BasketItem?basketId=${basketId}`
+        `https://localhost:5000/api/Basket?basketId=${basketId}`
       );
+      // setBasketItems(response.data);
       setBasketItems(response.data);
       setStatus({ loading: false, name: '' });
+      console.log('setBasketItems', setBasketItems);
     };
     fetchBasketItems();
   }, [basketId]);
@@ -86,11 +105,12 @@ const AppBasket = () => {
   console.log(totalItemCount);
 
   console.log(basketItems);
+  // onsole.log('aa', basketItem);
 
   //小計
   let amount = 0;
   basketItems.forEach((item) => {
-    amount += item.product.price * item.quantity;
+    amount += item.price * item.quantity;
   });
   console.log(amount);
   let postage = 0;
@@ -120,11 +140,15 @@ const AppBasket = () => {
         }
       );
       const data = await response.json();
-      const basketItems = data?.items?.map((item: BasketConfirm) => {
+      const basketItems = data?.items?.map((item: BasketItem) => {
         return {
-          basketId: item.basketId,
+          productId: item.productId,
+          name: item.name,
+          price: item.price,
+          pictureUrl: item.pictureUrl,
+          brand: item.brand,
+          type: item.type,
           quantity: item.quantity,
-          product: item.product,
         };
       });
       setBasketItems(basketItems);
@@ -154,11 +178,18 @@ const AppBasket = () => {
         }
       );
       const data = await response.json();
-      const basketItems = data?.items?.map((item: BasketConfirm) => {
+      const basketItems = data?.items?.map((item: BasketItem) => {
         return {
-          basketId: item.basketId,
+          // basketId: item.basketId,
+          // quantity: item.quantity,
+          // product: item.product,
+          productId: item.productId,
+          name: item.name,
+          price: item.price,
+          pictureUrl: item.pictureUrl,
+          brand: item.brand,
+          type: item.type,
           quantity: item.quantity,
-          product: item.product,
         };
       });
       setBasketItems(basketItems);
@@ -187,24 +218,24 @@ const AppBasket = () => {
             <TableBody>
               {basketItems.map((item) => (
                 <TableRow
-                  key={item.basketId}
+                  // key={item.basketId}
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                 >
                   <TableCell component="th" scope="row">
                     <Box display="flex" alignItems="right">
                       <img
                         style={{ height: 50 }}
-                        src={item.product.pictureUrl}
-                        alt={item.product.name}
+                        src={item.pictureUrl}
+                        alt={item.name}
                       />
                       {/* <span>{item.product.name.trim()}</span> */}
                     </Box>
                   </TableCell>
                   <TableCell sx={{ width: '15%' }}>
-                    {item.product.name.trim()}
+                    {item.name.trim()}
                   </TableCell>
                   <TableCell align="right">
-                    ${(item.product.price / 100).toFixed(2)}
+                    ${(item.price / 100).toFixed(2)}
                   </TableCell>
                   <TableCell
                     align="center"
@@ -213,7 +244,7 @@ const AppBasket = () => {
                     <LoadingButton
                       loading={status.loading}
                       onClick={() =>
-                        handleRemoveItem(item.product.id, 1, item.product.name)
+                        handleRemoveItem(item.productId, 1, item.name)
                       }
                     >
                       <RemoveIcon
@@ -225,7 +256,7 @@ const AppBasket = () => {
                     <LoadingButton
                       loading={status.loading}
                       onClick={() =>
-                        handleAddItem(item.product.id, 1, item.product.name)
+                        handleAddItem(item.productId, 1, item.name)
                       }
                     >
                       <AddIcon sx={{ marginLeft: 1, paddingTop: 1 }} />
@@ -235,11 +266,7 @@ const AppBasket = () => {
                     <LoadingButton
                       loading={status.loading}
                       onClick={() =>
-                        handleAddItem(
-                          item.product.id,
-                          item.quantity,
-                          item.product.name
-                        )
+                        handleAddItem(item.productId, item.quantity, item.name)
                       }
                     >
                       <DeleteIcon color="error" />

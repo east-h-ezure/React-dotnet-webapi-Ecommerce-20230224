@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import axios from 'axios';
-import { Product } from '../../product';
+import { Product } from '../../app/models/product';
 import {
   Button,
   Divider,
@@ -23,7 +23,7 @@ import { LoadingButton } from '@mui/lab';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { isTemplateExpression } from 'typescript';
-import { Basket, BasketConfirm, BasketItem } from '../../app/models/basket';
+import { Basket, BasketItem } from '../../app/models/basket';
 
 const StyledTypography = styled(Typography)({
   fontSize: 15,
@@ -46,7 +46,7 @@ const ProductDetails = () => {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(0);
-  const [basketItem, setBasketItem] = useState<BasketConfirm[]>([]);
+  const [basketItem, setBasketItem] = useState<BasketItem[]>([]);
   const [basketId, setBasketId] = useState<string>(
     'AFACBFAC-A1EC-4754-B349-1DDA2B98FB21'
   );
@@ -68,7 +68,7 @@ const ProductDetails = () => {
   //basketitemのget
   const fetchBasketItems = async () => {
     const response = await axios.get(
-      `https://localhost:5000/api/BasketItem?basketId=${basketId}`
+      `https://localhost:5000/api/Basket?basketId=${basketId}`
     );
     setBasketItem(response.data);
     setLoading(false);

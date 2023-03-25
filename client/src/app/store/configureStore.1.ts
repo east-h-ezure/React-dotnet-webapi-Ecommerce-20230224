@@ -3,6 +3,7 @@ import { counterSlice } from '../../features/contact/counterSlice';
 import { counterReducer } from '../../features/contact/couterReducer';
 import { configureStore } from '@reduxjs/toolkit';
 import { useDispatch, TypedUseSelectorHook, useSelector } from 'react-redux';
+import { basketSlice } from '../../features/basket/basketSlice';
 
 // export function configureStore() {
 //   return createStore(counterReducer);
@@ -11,6 +12,8 @@ import { useDispatch, TypedUseSelectorHook, useSelector } from 'react-redux';
 export const store = configureStore({
   reducer: {
     counter: counterSlice.reducer,
+    // basket: basketSlice.reducer,
+    basketItem: basketSlice.reducer,
   },
 });
 

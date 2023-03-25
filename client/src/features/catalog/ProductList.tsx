@@ -7,7 +7,7 @@ import {
   ListItemText,
 } from '@mui/material';
 import React from 'react';
-import { Product } from '../../product';
+import { Product } from '../../app/models/product';
 import ProductCard from './ProductCard';
 
 interface Props {

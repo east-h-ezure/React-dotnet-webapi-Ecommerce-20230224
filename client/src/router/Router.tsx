@@ -11,8 +11,8 @@ import App from '../app/layout/App';
 import Header2 from '../app/layout/Header2';
 import HomePage from '../features/home/HomePage';
 import ProductDetails from '../features/catalog/ProductDetails';
-import { Product } from '../product';
-import { Basket, BasketConfirm } from '../app/models/basket';
+import { Product } from '../app/models/product';
+import { Basket, BasketItem } from '../app/models/basket';
 import AppBasket from '../AppBasket';
 // import { getCookie } from '../app/util/util';
 // import agent from '../app/api/agent';
@@ -41,7 +41,7 @@ const Router = () => {
   //   }
   // }, [setBasket]);
 
-  const [basketItems, setBasketItems] = useState<BasketConfirm[]>([]);
+  const [basketItems, setBasketItems] = useState<BasketItem[]>([]);
   // const [basket, setBasket] = useState<BasketConfirm | null>(null);
 
   const handleThemeChange = () => {

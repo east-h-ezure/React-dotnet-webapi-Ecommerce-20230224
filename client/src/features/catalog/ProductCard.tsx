@@ -14,13 +14,13 @@ import {
 import { fontWeight } from '@mui/system';
 import React, { useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { Product } from '../../product';
+import { Product } from '../../app/models/product';
 import { styled } from '@mui/system';
 import axios, { AxiosResponse } from 'axios';
 //import { useStoreContext } from '../../app/context/StoreContext';
 import { LoadingButton } from '@mui/lab';
 import config from '../../app/api/config';
-import { Basket, BasketConfirm } from '../../app/models/basket';
+import { Basket, BasketItem } from '../../app/models/basket';
 
 interface Props {
   product: Product;
@@ -40,7 +40,7 @@ const ProductCard = ({ product }: Props) => {
   const userId = 'aa';
   // const guid = 'AFACBFAC-A1EC-4754-B349-1DDA2B98FB21';
   const [basket, setBasket] = useState<Basket[]>([]);
-  const [basketItem, setBasketItem] = useState<BasketConfirm[]>([]);
+  const [basketItem, setBasketItem] = useState<BasketItem[]>([]);
 
   const responseBody = (response: AxiosResponse) => response.data;
 
@@ -74,11 +74,15 @@ const ProductCard = ({ product }: Props) => {
         }
       );
       const data = await response.json();
-      const basketItems = data?.items?.map((item: BasketConfirm) => {
+      const basketItems = data?.items?.map((item: BasketItem) => {
         return {
-          basketId: item.basketId,
+          productId: item.productId,
+          name: item.name,
+          price: item.price,
+          pictureUrl: item.pictureUrl,
+          brand: item.brand,
+          type: item.type,
           quantity: item.quantity,
-          product: item.product,
         };
       });
       setBasketItem(basketItems);

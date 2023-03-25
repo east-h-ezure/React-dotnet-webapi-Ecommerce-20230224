@@ -1,4 +1,5 @@
 export interface Product {
+  find(arg0: (i: any) => boolean): unknown;
   id: number;
   name: string;
   description: string;
