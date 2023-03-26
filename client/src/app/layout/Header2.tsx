@@ -60,7 +60,7 @@ interface Props {
 
 const Header = ({ handleThemeChange, darkMode }: Props) => {
   const { basketItem } = useAppSelector((state) => state.basketItem);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const handleDrawerToggle = () => {
@@ -82,16 +82,16 @@ const Header = ({ handleThemeChange, darkMode }: Props) => {
     'AFACBFAC-A1EC-4754-B349-1DDA2B98FB21'
   );
 
-  useEffect(() => {
-    const fetchBasketItems = async () => {
-      const response = await axios.get(
-        `https://localhost:5000/api/BasketItem?basketId=${basketId}`
-      );
-      setBasketItems(response.data);
-      setLoading(false);
-    };
-    fetchBasketItems();
-  }, [basketId]);
+  // useEffect(() => {
+  //   const fetchBasketItems = async () => {
+  //     const response = await axios.get(
+  //       `https://localhost:5000/api/BasketItem?basketId=${basketId}`
+  //     );
+  //     setBasketItems(response.data);
+  //     setLoading(false);
+  //   };
+  //   fetchBasketItems();
+  // }, [basketId]);
 
   //カートの商品数
   const [totalItemCount, setTotalItemCount] = useState(0);
@@ -104,7 +104,7 @@ const Header = ({ handleThemeChange, darkMode }: Props) => {
   }, [basketItem]);
   console.log('basketItem', basketItem);
 
-  if (loading) return <Loading />;
+  // if (loading) return <Loading />;
 
   return (
     <AppContainer>

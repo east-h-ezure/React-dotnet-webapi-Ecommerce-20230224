@@ -60,8 +60,8 @@ const ProductDetails = () => {
   // console.log('QD', quantityOfDetail);
 
   //console.log('item', item);
-  const items = basketItem.find((i) => i.product.id === product?.id);
-  console.log('items', items);
+  // const items = basketItem.find((i) => i.product.id === product?.id);
+  // console.log('items', items);
 
   //quantity
 
@@ -78,10 +78,10 @@ const ProductDetails = () => {
   useEffect(() => {
     fetchBasketItems();
   }, [basketId]);
-  const item = basketItem?.find((i) => i.product.id === product?.id);
-  useEffect(() => {
-    if (item) setQuantity(item.quantity);
-  }, [item]);
+  // const item = basketItem?.find((i) => i.product.id === product?.id);
+  // useEffect(() => {
+  //   if (item) setQuantity(item.quantity);
+  // }, [item]);
 
   const handleInputChage = (event: any) => {
     if (event.target.value > 0) {
@@ -89,15 +89,15 @@ const ProductDetails = () => {
     }
   };
 
-  useEffect(() => {
-    // if (item) setQuantity(item?.quantity);
-    axios
-      .get(`https://localhost:5000/api/products/${id}`)
-      .then((res) => setProduct(res.data))
-      .catch((error) => console.log(error))
-      .finally(() => setLoading(false));
-  }, [id, item]);
-  console.log('item', item, id);
+  // useEffect(() => {
+  //   // if (item) setQuantity(item?.quantity);
+  //   axios
+  //     .get(`https://localhost:5000/api/products/${id}`)
+  //     .then((res) => setProduct(res.data))
+  //     .catch((error) => console.log(error))
+  //     .finally(() => setLoading(false));
+  // }, [id, item]);
+  // console.log('item', item, id);
 
   if (loading) return <h3>Loading...</h3>;
   if (!product) return <h3>商品が見つかりません</h3>;
@@ -240,12 +240,12 @@ const ProductDetails = () => {
                 {product.price * quantity}円
               </Typography>
             </Grid>
-            {basketItem.map((item) => {
+            {/* {basketItem.map((item) => {
               if (item.product.id === product.id) {
                 return (
                   <Grid item xs={4}>
                     {/* onClick={() => setQuantity(quantity + 1)} */}
-                    <TextField
+            {/* <TextField
                       onChange={handleInputChage}
                       variant="outlined"
                       type="number"
@@ -280,12 +280,12 @@ const ProductDetails = () => {
                         {item ? 'カートの更新' : '商品の追加'}
                       </Button>
                     </LoadingButton>
-                  </Grid>
-                );
+                  </Grid> */}
+            {/*  );
               } else {
                 return null;
               }
-            })}
+            })} */}
           </Grid>
         </Grid>
       </Grid>

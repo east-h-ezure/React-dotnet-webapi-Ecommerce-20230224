@@ -64,7 +64,7 @@ const App = () => {
     <ThemeProvider theme={theme}>
       {/* <ToastContainer position="bottom-right" hideProgressBar theme="colored" /> */}
       <CssBaseline />
-      <Header darkMode={darkMode} handleThemeChange={handleThemeChange} />
+      {<Header2 darkMode={darkMode} handleThemeChange={handleThemeChange} />}
       <Container>
         <Outlet />
       </Container>

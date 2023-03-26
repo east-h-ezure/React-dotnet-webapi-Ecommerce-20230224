@@ -1,6 +1,4 @@
-import { createStore } from 'redux';
 import { counterSlice } from '../../features/contact/counterSlice';
-import { counterReducer } from '../../features/contact/couterReducer';
 import { configureStore } from '@reduxjs/toolkit';
 import { useDispatch, TypedUseSelectorHook, useSelector } from 'react-redux';
 import { basketSlice } from '../../features/basket/basketSlice';

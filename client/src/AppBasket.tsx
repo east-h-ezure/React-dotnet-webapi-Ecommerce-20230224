@@ -231,9 +231,7 @@ const AppBasket = () => {
                       {/* <span>{item.product.name.trim()}</span> */}
                     </Box>
                   </TableCell>
-                  <TableCell sx={{ width: '15%' }}>
-                    {item.name.trim()}
-                  </TableCell>
+                  <TableCell sx={{ width: '15%' }}>{item.name}</TableCell>
                   <TableCell align="right">
                     ${(item.price / 100).toFixed(2)}
                   </TableCell>
