@@ -59,7 +59,7 @@ interface Props {
 }
 
 const Header = ({ handleThemeChange, darkMode }: Props) => {
-  const { basketItem } = useAppSelector((state) => state.basketItem);
+  const { basket } = useAppSelector((state) => state.basket);
   // const [loading, setLoading] = useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -78,9 +78,10 @@ const Header = ({ handleThemeChange, darkMode }: Props) => {
     },
   };
   const [basketItems, setBasketItems] = useState<BasketItem[]>([]);
-  const [basketId, setBasketId] = useState<string>(
-    'AFACBFAC-A1EC-4754-B349-1DDA2B98FB21'
-  );
+  // const [basketId, setBasketId] = useState<string>(
+  //   'AFACBFAC-A1EC-4754-B349-1DDA2B98FB21'
+  // );
+  const [basketId, setBasketId] = useState<number>(1);
 
   // useEffect(() => {
   //   const fetchBasketItems = async () => {
@@ -95,14 +96,14 @@ const Header = ({ handleThemeChange, darkMode }: Props) => {
 
   //カートの商品数
   const [totalItemCount, setTotalItemCount] = useState(0);
-  useEffect(() => {
-    let count = 0;
-    basketItem?.forEach((item) => {
-      count += item.quantity;
-    });
-    setTotalItemCount(count);
-  }, [basketItem]);
-  console.log('basketItem', basketItem);
+  // useEffect(() => {
+  //   let count = 0;
+  //   basket?.forEach((item) => {
+  //     count += item.quantity;
+  //   });
+  //   setTotalItemCount(count);
+  // }, [basket]);
+  console.log('basket', basket);
 
   // if (loading) return <Loading />;
 

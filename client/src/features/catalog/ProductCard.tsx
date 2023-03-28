@@ -21,6 +21,10 @@ import axios, { AxiosResponse } from 'axios';
 import { LoadingButton } from '@mui/lab';
 import config from '../../app/api/config';
 import { Basket, BasketItem } from '../../app/models/basket';
+import {
+  useAppDispatch,
+  useAppSelector,
+} from '../../app/store/configureStore.1';
 
 interface Props {
   product: Product;
@@ -36,10 +40,13 @@ const StyledLink = styled(RouterLink)`
 `;
 
 const ProductCard = ({ product }: Props) => {
+  const dispatch = useAppDispatch();
+  const { basket } = useAppSelector((state) => state.basket);
+
   const [loading, setLoading] = useState(false);
   const userId = 'aa';
   // const guid = 'AFACBFAC-A1EC-4754-B349-1DDA2B98FB21';
-  const [basket, setBasket] = useState<Basket[]>([]);
+  // const [basket, setBasket] = useState<Basket[]>([]);
   const [basketItem, setBasketItem] = useState<BasketItem[]>([]);
 
   const responseBody = (response: AxiosResponse) => response.data;
@@ -64,7 +71,7 @@ const ProductCard = ({ product }: Props) => {
     setLoading(true);
     try {
       const response = await fetch(
-        `${config.API_URL}Basket?productId=${productId}&quantity=${quantity}&userId=aa`,
+        `${config.API_URL}Basket?productId=${productId}&quantity=${quantity}&buyerId=test-user`,
         {
           method: 'POST',
           headers: {
@@ -74,7 +81,7 @@ const ProductCard = ({ product }: Props) => {
         }
       );
       const data = await response.json();
-      const basketItems = data?.items?.map((item: BasketItem) => {
+      const basket = data?.items?.map((item: BasketItem) => {
         return {
           productId: item.productId,
           name: item.name,
@@ -85,7 +92,7 @@ const ProductCard = ({ product }: Props) => {
           quantity: item.quantity,
         };
       });
-      setBasketItem(basketItems);
+      setBasketItem(basket);
       window.location.reload();
     } catch (error) {
       console.error(error);
@@ -94,6 +101,7 @@ const ProductCard = ({ product }: Props) => {
       window.location.reload();
     }
   };
+  console.log('product', product);
 
   return (
     <div>

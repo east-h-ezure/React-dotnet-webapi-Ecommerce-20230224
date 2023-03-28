@@ -15,15 +15,16 @@ import Loading from './Loading';
 import { BasketItem } from '../models/basket';
 import { useAppDispatch } from '../store/configureStore.1';
 import { Outlet } from 'react-router-dom';
-import { setBasketItem } from '../../features/basket/basketSlice';
+import { setBasket } from '../../features/basket/basketSlice';
 import axios from 'axios';
 
 const App = () => {
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(true);
-  const [basketId, setBasketId] = useState<string>(
-    'AFACBFAC-A1EC-4754-B349-1DDA2B98FB21'
-  );
+  // const [basketId, setBasketId] = useState<string>(
+  //   'AFACBFAC-A1EC-4754-B349-1DDA2B98FB21'
+  // );
+  const [basketId, setBasketId] = useState<number>(1);
   const [darkMode, setDarkMode] = useState(false);
   const paletteType = darkMode ? 'dark' : 'light';
   const theme = createTheme({
@@ -32,20 +33,36 @@ const App = () => {
     },
   });
 
+  // useEffect(() => {
+  //   const fetchBasketItems = async () => {
+  //     const response = await axios.get(
+  //       `https://localhost:5000/api/Basket?basketId=${basketId}`
+  //     );
+  //     // setBasketItems(response.data);
+  //     dispatch(setBasket(response.data));
+  //     setLoading(false);
+  //     console.log('setBasket', setBasket);
+  //   };
+  //   fetchBasketItems();
+  // }, [dispatch]);
+
   useEffect(() => {
     const fetchBasketItems = async () => {
-      const response = await axios.get(
-        `https://localhost:5000/api/Basket?basketId=${basketId}`
+      const response = await fetch(
+        `https://localhost:5000/api/Basket?basketId=${basketId}`,
+        {
+          mode: 'cors',
+        }
       );
-      // setBasketItems(response.data);
-      dispatch(setBasketItem(response.data));
+      const data = await response.json();
+      dispatch(setBasket(data));
       setLoading(false);
-      console.log(setBasketItem);
+      console.log('setBasket', setBasket);
     };
     fetchBasketItems();
-  }, [basketId, dispatch]);
+  }, [dispatch]);
 
-  const [basketItems, setBasketItems] = useState<BasketItem[]>([]);
+  // const [basketItems, setBasketItems] = useState<BasketItem[]>([]);
   // const [basket, setBasket] = useState<BasketConfirm | null>(null);
 
   const handleThemeChange = () => {
@@ -54,11 +71,11 @@ const App = () => {
   // ステップ1
   let totalItemCount = 0;
 
-  // ステップ2
-  basketItems.forEach((item) => {
-    totalItemCount += item.quantity;
-  });
-  console.log(totalItemCount);
+  // // ステップ2
+  // basketItems.forEach((item) => {
+  //   totalItemCount += item.quantity;
+  // });
+  // console.log(totalItemCount);
 
   return (
     <ThemeProvider theme={theme}>

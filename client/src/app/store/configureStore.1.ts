@@ -11,7 +11,7 @@ export const store = configureStore({
   reducer: {
     counter: counterSlice.reducer,
     // basket: basketSlice.reducer,
-    basketItem: basketSlice.reducer,
+    basket: basketSlice.reducer,
   },
 });
 

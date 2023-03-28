@@ -15,6 +15,7 @@ const Catalog = () => {
       console.error(error); // エラーが発生した行を特定するために、コンソールにエラーを出力する
     }
   }, []);
+  console.log('products', products);
 
   return (
     <div>

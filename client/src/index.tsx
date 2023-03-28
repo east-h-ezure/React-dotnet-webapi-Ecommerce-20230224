@@ -7,7 +7,7 @@ import { store, useAppDispatch } from './app/store/configureStore.1';
 import { StoreProvider } from './app/context/StoreContext';
 import { Provider } from 'react-redux';
 import Contact from './features/contact/Contact';
-import { setBasketItem } from './features/basket/basketSlice';
+// import { setBasketItem } from './features/basket/basketSlice';
 import { RouterProvider } from 'react-router-dom';
 import { router } from './app/router/Routes';
 

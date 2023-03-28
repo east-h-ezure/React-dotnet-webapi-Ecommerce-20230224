@@ -21,73 +21,202 @@ namespace API.Controllers
         {
             _config = config;
         }
-       
 
 
+
+        //[HttpGet]
+        //public async Task<ActionResult<List<BasketDto>>> GetBasketItem(int basketId)
+        //{
+        //    // データベース接続用の SqlConnection オブジェクトを作成し、OpenAsync メソッドで接続します
+        //    using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
+        //    await connection.OpenAsync();
+
+        //    // トランザクションを開始します
+        //    var transaction = connection.BeginTransaction();
+        //    try
+        //    {
+        //        var lookup = new Dictionary<int, BasketDto>();
+
+        //    var sql = @$"SELECT b.*, bi.*, p.Name, p.*
+        //        FROM BasketItem AS bi
+        //        INNER JOIN Basket AS b ON b.Id = bi.BasketId
+        //        INNER JOIN Product AS p ON p.Id = bi.ProductId
+        //        WHERE b.Id = @BasketId";
+
+        //var result = await connection.QueryAsync<BasketDto, BasketItemDto, BasketDto>(
+        //    sql,
+        //    (basket, basketItem) =>
+        //    {
+        //        if (!lookup.TryGetValue(basket.Id, out BasketDto basketDto))
+        //        {
+        //            basketDto = basket;
+        //            basketDto.Items = new List<BasketItemDto>();
+        //            lookup.Add(basket.Id, basketDto);
+        //        }
+
+        //        var item = new BasketItemDto
+        //        {
+        //            ProductId = basketItem.ProductId,
+        //            Name = basketItem.Name,
+        //            Price = basketItem.Price,
+        //            PictureUrl = basketItem.PictureUrl,
+        //            Brand = basketItem.Brand,
+        //            Type = basketItem.Type,
+        //            Quantity = basketItem.Quantity
+        //        };
+
+        //        basketDto.Items.Add(item);
+
+        //        return basketDto;
+        //    },
+        //    new { BasketId = basketId },
+        //splitOn: "ProductId",
+        //    transaction: transaction,
+        //    commandType: CommandType.Text
+        //);
+
+
+        //return result.ToList();
+        //            var result = await connection.QueryAsync<BasketDto, BasketItemDto, BasketDto>(
+        //    sql,
+        //    (basket, basketItem) =>
+        //    {
+        //        if (!lookup.TryGetValue(basket.Id, out BasketDto basketDto))
+        //        {
+        //            basketDto = basket;
+        //            basketDto.Items = new List<BasketItemDto>();
+        //            lookup.Add(basket.Id, basketDto);
+        //        }
+
+        //        var item = new BasketItemDto
+        //        {
+        //            ProductId = basketItem.ProductId,
+        //            Name = basketItem.Name,
+        //            Price = basketItem.Price,
+        //            PictureUrl = basketItem.PictureUrl,
+        //            Brand = basketItem.Brand,
+        //            Type = basketItem.Type,
+        //            Quantity = basketItem.Quantity
+        //        };
+
+        //        basketDto.Items.Add(item);
+
+        //        return basketDto;
+        //    },
+        //    new { BasketId = basketId },
+        //    splitOn: "ProductId",
+        //    transaction: transaction,
+        //    commandType: CommandType.Text
+        //);
+
+        //            var baskets = lookup.Values.ToList();
+        //            return baskets;
+        //                var result = await connection.QueryAsync<BasketDto, BasketItemDto, BasketDto>(
+        //    sql,
+        //    (basket, basketItem) =>
+        //    {
+        //        if (!lookup.TryGetValue(basket.Id, out BasketDto basketDto))
+        //        {
+        //            basketDto = basket;
+        //            basketDto.Items = new List<BasketItemDto>();
+        //            lookup.Add(basket.Id, basketDto);
+        //        }
+
+        //        var item = new BasketItemDto
+        //        {
+        //            ProductId = basketItem.ProductId,
+        //            Name = basketItem.Name.Trim(),
+        //            Price = basketItem.Price,
+        //            PictureUrl = basketItem.PictureUrl.Trim(),
+        //            Brand = basketItem.Brand.Trim(),
+        //            Type = basketItem.Type.Trim(),
+        //            Quantity = basketItem.Quantity
+        //        };
+
+        //        basketDto.Items.Add(item);
+
+        //        return basketDto;
+        //    },
+        //    new { BasketId = basketId },
+        //    splitOn: "ProductId",
+        //    transaction: transaction,
+        //    commandType: CommandType.Text
+        //);
+
+        //                var baskets = result.Distinct().ToList();
+        //                return baskets;
+
+
+        //                //return result.ToList();
+        //                //return res;
+        //            }
+        //            catch
+        //            {
+        //                // トランザクションをロールバックする
+        //                transaction.Rollback();
+        //                throw;
+        //            }
+
+        //        }
         [HttpGet]
         public async Task<ActionResult<List<BasketDto>>> GetBasketItem(int basketId)
         {
-            // データベース接続用の SqlConnection オブジェクトを作成し、OpenAsync メソッドで接続します
             using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
             await connection.OpenAsync();
-
-            // トランザクションを開始します
             var transaction = connection.BeginTransaction();
             try
             {
                 var lookup = new Dictionary<int, BasketDto>();
 
-            var sql = @$"SELECT b.*, bi.*, p.Name, p.*
-                FROM BasketItem AS bi
-                INNER JOIN Basket AS b ON b.Id = bi.BasketId
-                INNER JOIN Product AS p ON p.Id = bi.ProductId
-                WHERE b.Id = @BasketId";
+                var sql = @$"SELECT b.Id, b.BuyerId, bi.ProductId, bi.Quantity, p.Name, p.Price, p.PictureUrl, p.Brand, p.Type
+                     FROM Basket AS b
+                     INNER JOIN BasketItem AS bi ON b.Id = bi.BasketId
+                     INNER JOIN Product AS p ON bi.ProductId = p.Id
+                     WHERE b.Id = @BasketId";
 
-            var result = await connection.QueryAsync<BasketDto, BasketItemDto, BasketDto>(
-                sql,
-                (basket, basketItem) =>
-                {
-                    if (!lookup.TryGetValue(basket.Id, out BasketDto basketDto))
+                var result = await connection.QueryAsync<BasketDto, BasketItemDto, BasketDto>(
+                    sql,
+                    (basket, basketItem) =>
                     {
-                        basketDto = basket;
-                        basketDto.Items = new List<BasketItemDto>();
-                        lookup.Add(basket.Id, basketDto);
-                    }
+                        if (!lookup.TryGetValue(basket.Id, out BasketDto basketDto))
+                        {
+                            basketDto = basket;
+                            basketDto.Items = new List<BasketItemDto>();
+                            lookup.Add(basket.Id, basketDto);
+                        }
 
-                    var item = new BasketItemDto
-                    {
-                        ProductId = basketItem.ProductId,
-                        Name = basketItem.Name,
-                        Price = basketItem.Price,
-                        PictureUrl = basketItem.PictureUrl,
-                        Brand = basketItem.Brand,
-                        Type = basketItem.Type,
-                        Quantity = basketItem.Quantity
-                    };
+                        var item = new BasketItemDto
+                        {
+                            ProductId = basketItem.ProductId,
+                            Name = basketItem.Name,
+                            Price = basketItem.Price,
+                            PictureUrl = basketItem.PictureUrl,
+                            Brand = basketItem.Brand,
+                            Type = basketItem.Type,
+                            Quantity = basketItem.Quantity
+                        };
 
-                    basketDto.Items.Add(item);
+                        basketDto.Items.Add(item);
 
-                    return basketDto;
-                },
-                new { BasketId = basketId },
-            splitOn: "ProductId",
-                transaction: transaction,
-                commandType: CommandType.Text
-            );
+                        return basketDto;
+                    },
+                    new { BasketId = basketId },
+                    splitOn: "ProductId",
+                    transaction: transaction,
+                    commandType: CommandType.Text
+                );
 
-
-            return result.ToList();
-                //return result.ToList();
-                //return res;
+                transaction.Commit();
+                var baskets = lookup.Values.ToList();
+                return baskets;
             }
             catch
             {
-                // トランザクションをロールバックする
                 transaction.Rollback();
                 throw;
             }
-
         }
+
 
 
 

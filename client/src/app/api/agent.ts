@@ -10,12 +10,28 @@ axios.defaults.withCredentials = true;
 
 const responseBody = (response: AxiosResponse) => response.data;
 
+const instance = axios.create({
+  baseURL: 'http://localhost:5000/api/',
+  withCredentials: true,
+  headers: {
+    'Access-Control-Allow-Origin': '*',
+    'Content-Type': 'application/json',
+  },
+});
+
 const requests = {
-  get: (url: string) => axios.get(url).then(responseBody),
-  post: (url: string, body: {}) => axios.post(url, body).then(responseBody),
-  put: (url: string, body: {}) => axios.put(url, body).then(responseBody),
-  del: (url: string) => axios.delete(url).then(responseBody),
+  get: (url: string) => instance.get(url).then(responseBody),
+  post: (url: string, body: {}) => instance.post(url, body).then(responseBody),
+  put: (url: string, body: {}) => instance.put(url, body).then(responseBody),
+  del: (url: string) => instance.delete(url).then(responseBody),
 };
+
+// const requests = {
+//   get: (url: string) => axios.get(url).then(responseBody),
+//   post: (url: string, body: {}) => axios.post(url, body).then(responseBody),
+//   put: (url: string, body: {}) => axios.put(url, body).then(responseBody),
+//   del: (url: string) => axios.delete(url).then(responseBody),
+// };
 
 const Catalog = {
   list: () => requests.get('products'),
@@ -30,31 +46,36 @@ const TestErrors = {
   getValidationError: () => requests.get('buggy/validation-error'),
 };
 // eslint-disable-next-line react-hooks/rules-of-hooks
-const [basketItems, setBasketItems] = useState<BasketItem[]>([]);
+// const [basketItems, setBasketItems] = useState<BasketItem[]>([]);
 // eslint-disable-next-line react-hooks/rules-of-hooks
 // const [basketId, setBasketId] = useState<string>(
 //   'AFACBFAC-A1EC-4754-B349-1DDA2B98FB21'
 // );
 // eslint-disable-next-line react-hooks/rules-of-hooks
-const [basketId, setBasketId] = useState<number>(1);
+// const [basketId, setBasketId] = useState<number>(1);
 
 const Basket = {
-  get: (basketId: string) => requests.get(`Basket?basketId=${basketId}`),
-  basketItems: (basketId: string) =>
-    requests
-      .get(`Basket?basketId=${basketId}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setBasketItems(data);
-      })
-      .catch((error) => {
-        console.log(error);
-        throw error;
-      }),
-  addItem: (productId: number, quantity = 1) =>
-    requests.post(`basket?productId=${productId}&quantity=${quantity}`, {}),
-  removeItem: (productId: number, quantity = 1) =>
-    requests.del(`basket?productId=${productId}&quantity=${quantity}`),
+  get: (basketId: number) => requests.get(`Basket?basketId=${basketId}`),
+  // basketItems: (basketId: string) =>
+  //   requests
+  //     .get(`Basket?basketId=${basketId}`)
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       setBasket(data);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //       throw error;
+  //     }),
+  addItem: (productId: number, quantity = 1, buyerId: string) =>
+    requests.post(
+      `basket?productId=${productId}&quantity=${quantity}&buyerId=${buyerId}`,
+      {}
+    ),
+  removeItem: (productId: number, quantity = 1, buyerId: string) =>
+    requests.del(
+      `basket?productId=${productId}&quantity=${quantity}&buyerId=${buyerId}`
+    ),
 };
 
 const agent = {
