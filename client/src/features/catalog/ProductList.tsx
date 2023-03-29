@@ -17,7 +17,7 @@ interface Props {
 const ProductList = ({ products }: Props) => {
   return (
     <div>
-      <Grid container spacing={4} sx={{ mt: 3 }}>
+      <Grid container spacing={4}>
         {products.map((product) => (
           <Grid item key={product.id} xs={3}>
             <ProductCard product={product} />
