@@ -164,84 +164,84 @@ const AppBasket = () => {
   console.log(postage);
   if (loading) return <Loading message="Loaging basket..." />;
 
-  // const handleAddItem = async (
-  //   productId: number,
-  //   quantity = 1,
-  //   name: string
-  // ) => {
-  //   setLoading(true);
-  //   try {
-  //     const response = await fetch(
-  //       `${config.API_URL}Basket?productId=${productId}&quantity=${quantity}&userId=aa`,
-  //       {
-  //         method: 'POST',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //         },
-  //         mode: 'cors',
-  //       }
-  //     );
-  //     const data = await response.json();
-  //     const basket = data?.items?.map((item: BasketItem) => {
-  //       return {
-  //         productId: item.productId,
-  //         name: item.name,
-  //         price: item.price,
-  //         pictureUrl: item.pictureUrl,
-  //         brand: item.brand,
-  //         type: item.type,
-  //         quantity: item.quantity,
-  //       };
-  //     });
-  //     setBasket(basket);
-  //     window.location.reload();
-  //   } catch (error) {
-  //     console.error(error);
-  //   } finally {
-  //     setLoading(false);
-  //     window.location.reload();
-  //   }
-  // };
-  // const handleRemoveItem = async (
-  //   productId: number,
-  //   quantity = 1,
-  //   name: string
-  // ) => {
-  //   setLoading(true);
-  //   try {
-  //     const response = await fetch(
-  //       `${config.API_URL}Basket?productId=${productId}&quantity=${quantity}&userId=aa`,
-  //       {
-  //         method: 'DELETE',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //         },
-  //         mode: 'cors',
-  //       }
-  //     );
-  //     const data = await response.json();
-  //     const basket = data?.items?.map((item: BasketItem) => {
-  //       return {
-  //         // basketId: item.basketId,
-  //         // quantity: item.quantity,
-  //         // product: item.product,
-  //         productId: item.productId,
-  //         name: item.name,
-  //         price: item.price,
-  //         pictureUrl: item.pictureUrl,
-  //         brand: item.brand,
-  //         type: item.type,
-  //         quantity: item.quantity,
-  //       };
-  //     });
-  //     setBasket(basket);
-  //   } catch (error) {
-  //     console.error(error);
-  //   } finally {
-  //     setLoading(false);
-  //     window.location.reload();
-  //   }
-  // };
+  const handleAddItem = async (
+    productId: number,
+    quantity = 1,
+    name: string
+  ) => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `${config.API_URL}Basket?productId=${productId}&quantity=${quantity}&buyerId=test-user`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          mode: 'cors',
+        }
+      );
+      const data = await response.json();
+      const basket = data?.items?.map((item: BasketItem) => {
+        return {
+          productId: item.productId,
+          name: item.name,
+          price: item.price,
+          pictureUrl: item.pictureUrl,
+          brand: item.brand,
+          type: item.type,
+          quantity: item.quantity,
+        };
+      });
+      setBasket(basket);
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+      window.location.reload();
+    }
+  };
+  const handleRemoveItem = async (
+    productId: number,
+    quantity = 1,
+    name: string
+  ) => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `${config.API_URL}Basket?productId=${productId}&quantity=${quantity}&buyerId=test-user`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          mode: 'cors',
+        }
+      );
+      const data = await response.json();
+      const basket = data?.items?.map((item: BasketItem) => {
+        return {
+          // basketId: item.basketId,
+          // quantity: item.quantity,
+          // product: item.product,
+          productId: item.productId,
+          name: item.name,
+          price: item.price,
+          pictureUrl: item.pictureUrl,
+          brand: item.brand,
+          type: item.type,
+          quantity: item.quantity,
+        };
+      });
+      setBasket(basket);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+      window.location.reload();
+    }
+  };
 
   return (
     <>
@@ -283,9 +283,9 @@ const AppBasket = () => {
                   >
                     <LoadingButton
                       loading={loading}
-                      /* onClick={() =>
+                      onClick={() =>
                         handleRemoveItem(item.productId, 1, item.name)
-                      } */
+                      }
                     >
                       <RemoveIcon
                         sx={{ marginRight: 1, paddingTop: 1 }}
@@ -295,9 +295,9 @@ const AppBasket = () => {
                     {item.quantity}
                     <LoadingButton
                       loading={loading}
-                      /* onClick={() =>
+                      onClick={() =>
                         handleAddItem(item.productId, 1, item.name)
-                      } */
+                      }
                     >
                       <AddIcon sx={{ marginLeft: 1, paddingTop: 1 }} />
                     </LoadingButton>
@@ -305,9 +305,13 @@ const AppBasket = () => {
                   <TableCell align="center">
                     <LoadingButton
                       loading={loading}
-                      /* onClick={() =>
-                        handleAddItem(item.productId, item.quantity, item.name)
-                      } */
+                      onClick={() =>
+                        handleRemoveItem(
+                          item.productId,
+                          item.quantity,
+                          item.name
+                        )
+                      }
                     >
                       <DeleteIcon color="error" />
                     </LoadingButton>
