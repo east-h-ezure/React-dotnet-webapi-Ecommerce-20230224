@@ -7,6 +7,6 @@ export interface Product {
   type: string;
   brand: string;
   pictureUrl: string;
-  // quantityInStock: number;
-  publisher: string;
+  quantityInStock: number;
+  //publisher: string;
 }

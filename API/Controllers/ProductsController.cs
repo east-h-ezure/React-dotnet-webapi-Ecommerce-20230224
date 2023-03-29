@@ -44,8 +44,7 @@ Name,
  Price,
  PictureUrl,
  Brand,
- Type,
- QuantityInStock
+ Type
  )
  VALUES
   (
@@ -54,8 +53,7 @@ Name,
  @Price,
  @PictureUrl,
  @Brand,
- @Type,
- @QuantityInStock
+ @Type
  )", product);
             return Ok(data);
         }

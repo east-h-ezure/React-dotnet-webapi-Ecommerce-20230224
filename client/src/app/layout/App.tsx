@@ -32,6 +32,7 @@ const App = () => {
       mode: paletteType,
     },
   });
+  // const [product, setProduct] = useState<Product[]>([]);
 
   // useEffect(() => {
   //   const fetchBasketItems = async () => {
@@ -61,6 +62,18 @@ const App = () => {
     };
     fetchBasketItems();
   }, [dispatch]);
+  // useEffect(() => {
+  //   const fetchProducts = async () => {
+  //     const response = await fetch(`https://localhost:5000/api/Product`, {
+  //       mode: 'cors',
+  //     });
+  //     const data = await response.json();
+  //     setProduct(data);
+  //     setLoading(false);
+  //     console.log('product', product);
+  //   };
+  //   fetchProducts();
+  // });
 
   // const [basketItems, setBasketItems] = useState<BasketItem[]>([]);
   // const [basket, setBasket] = useState<BasketConfirm | null>(null);
