@@ -1,3 +1,7 @@
+using API.Models;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -33,3 +37,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+
