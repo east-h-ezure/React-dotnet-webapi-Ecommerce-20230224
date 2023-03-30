@@ -44,12 +44,12 @@ namespace API.Controllers
         //    return Ok(query);
         //}
 
-
         //ソートと検索の両方成功
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts(
             [FromQuery] string? sort,
-            [FromQuery] string? search)
+            [FromQuery] string? search
+            )
         {
             using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
             await connection.OpenAsync();
@@ -60,18 +60,23 @@ namespace API.Controllers
             {
                 var query = new StringBuilder("SELECT * FROM Product");
 
+                //検索ワードがある場合
                 if (!string.IsNullOrEmpty(search))
                 {
                     query.Append(" WHERE Name LIKE @SearchTerm");
                 }
 
+                //ソートの条件
                 query.Append(sort switch
                 {
                     "high-price" => " ORDER BY price DESC",
                     "low-price" => " ORDER BY price ASC",
                     _ => ""
                 });
+                var brandList = new List<string>();
+                var typeList = new List<string>();
 
+                //パラメーターの使用
                 var parameters = new DynamicParameters();
                 if (!string.IsNullOrEmpty(search))
                 {
@@ -96,46 +101,64 @@ namespace API.Controllers
         }
 
 
-
+        //ソートと検索、フィルタリングの両方成功
         //[HttpGet]
-        //public async Task<ActionResult<Product>> GetProducts([FromQuery(Name = "sort")] string sort = "low-price", [FromQuery(Name = "search")] string search = "")
+        //public async Task<ActionResult<IEnumerable<Product>>> GetProducts(
+        //    [FromQuery] string? sort,
+        //    [FromQuery] string? search,
+        //    [FromQuery] string? brands,
+        //    [FromQuery] string? types
+        //)
         //{
         //    using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
         //    await connection.OpenAsync();
 
-        //    using var transaction = connection.BeginTransaction();
+        //    using var transaction = await connection.BeginTransactionAsync();
 
         //    try
         //    {
-        //        if (!string.IsNullOrWhiteSpace(search) && !string.IsNullOrWhiteSpace(sort))
+        //        var query = new StringBuilder("SELECT * FROM Product");
+
+        //        var hasSearchTerm = !string.IsNullOrEmpty(search);
+        //        var hasBrand = !string.IsNullOrEmpty(brands);
+        //        var hasType = !string.IsNullOrEmpty(types);
+        //        var parameters = new DynamicParameters();
+
+        //        if (hasSearchTerm || hasBrand || hasType)
         //        {
-        //            var query = "SELECT * FROM Product WHERE name LIKE @keyword OR description LIKE @keyword";
-        //            var products = await connection.Search(search, orderBy: sort, transaction: transaction);
-        //            return Ok(products);
+        //            query.Append(" WHERE");
+
+        //            if (hasSearchTerm)
+        //            {
+        //                query.Append(" Name LIKE @SearchTerm");
+        //                parameters.Add("@SearchTerm", $"%{search}%");
+        //            }
+
+        //            if (hasBrand)
+        //            {
+        //                query.Append(hasSearchTerm ? " AND" : "");
+        //                query.Append(" Brand = @Brand");
+        //                parameters.Add("@Brand", brands);
+        //            }
+
+        //            if (hasType)
+        //            {
+        //                query.Append((hasSearchTerm || hasBrand) ? " AND" : "");
+        //                query.Append(" Type = @Type");
+        //                parameters.Add("@Type", types);
+        //            }
         //        }
-        //        //sortが空の場合
-        //        else if (!string.IsNullOrWhiteSpace(search) && string.IsNullOrWhiteSpace(sort))
-        //        {
-        //            var products = await connection.Search(search, transaction: transaction);
-        //            return Ok(products);
-        //        }
-        //        //searchが空の場合
-        //        else if (string.IsNullOrWhiteSpace(search) && !string.IsNullOrWhiteSpace(sort))
-        //        {
-        //            var products = await connection.Sort(sort, transaction);
-        //            return Ok(products);
-        //        }
-        //        //両方空の場合
-        //        else
-        //        {
-        //            var query = "SELECT * FROM Product";
-        //            var result = await connection.QueryAsync<Product>(query, transaction: transaction);
-        //            return Ok(result);
-        //        }
+
+
+        //        var products = await connection.QueryAsync<Product>(query.ToString(), parameters, transaction);
+
+        //        await transaction.CommitAsync();
+
+        //        return Ok(products);
         //    }
         //    catch (Exception ex)
         //    {
-        //        transaction.Rollback();
+        //        await transaction.RollbackAsync();
         //        return BadRequest(new ProblemDetails
         //        {
         //            Title = "Problem removing item to basket",
