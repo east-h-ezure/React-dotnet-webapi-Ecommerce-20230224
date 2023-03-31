@@ -32,6 +32,7 @@ import Loading from '../../app/layout/Loading';
 
 const Catalog = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [brandTypes, setBrandTypes] = useState({ brands: [], types: [] });
   // const {productLoaded, status, filterLoaded, brands, types} = useAppSelector(state => state.catalog);
   const sortOptions = [
     { value: 'name', label: 'アルファベット順' },
@@ -77,6 +78,18 @@ const Catalog = () => {
   }, [sort, search, page, pageSize]); // searchパラメーターを含めるため、依存リストにsearchを追加する
   console.log('products', products);
 
+  useEffect(() => {
+    try {
+      fetch('https://localhost:5000/api/Products/brand-types', { mode: 'cors' })
+        .then((response) => response.json())
+        .then((data) => setBrandTypes(data));
+    } catch (error) {
+      console.error(error); // エラーが発生した行を特定するために、コンソールにエラーを出力する
+    }
+  }, []); // searchパラメーターを含めるため、依存リストにsearchを追加する
+  console.log('products', products);
+  console.log('brandTypes', brandTypes);
+
   if (status.includes('pending'))
     return <Loading message="Loading products..." />;
 
@@ -104,30 +117,19 @@ const Catalog = () => {
         </Paper>
         <Paper sx={{ mb: 2, p: 2 }}>
           <FormGroup>
-            {/* {brands.map(brand => (
-               <FormControlLabel
-               control={<Checkbox defaultChecked />}
-               label={brand} key={brand}
-             />
-            ))} */}
-            <FormControlLabel
-              control={<Checkbox defaultChecked />}
-              label="Label"
-            />
+            {brandTypes.brands.map((brand) => (
+              <FormControlLabel control={<Checkbox />} label={brand} />
+            ))}
           </FormGroup>
         </Paper>
         <Paper sx={{ mb: 2, p: 2 }}>
           <FormGroup>
-            {/* {types.map(brand => (
-               <FormControlLabel
-               control={<Checkbox defaultChecked />}
-               label={type} key={label}
-             />
-            ))} */}
-            <FormControlLabel
-              control={<Checkbox defaultChecked />}
-              label="Label"
-            />
+            {brandTypes.types.map((type) => (
+              <FormControlLabel
+                control={<Checkbox defaultChecked />}
+                label={type}
+              />
+            ))}
           </FormGroup>
         </Paper>
       </Grid>
@@ -139,8 +141,8 @@ const Catalog = () => {
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Typography>1-6 of 20 items</Typography>
           <Stack spacing={2}>
-            <Pagination count={10} />
-            <Pagination count={10} color="primary" />
+            <Pagination size="large" count={10} />
+            <Pagination count={10} color="primary" size="large" />
           </Stack>
         </Box>
       </Grid>
