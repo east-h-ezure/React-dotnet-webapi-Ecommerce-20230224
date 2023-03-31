@@ -18,8 +18,17 @@ import {
 } from '@mui/material';
 import ProductList from './ProductList';
 import { useEffect, useState } from 'react';
-import { useAppSelector } from '../../app/store/configureStore.1';
+import {
+  useAppDispatch,
+  useAppSelector,
+} from '../../app/store/configureStore.1';
 import { BrandingWatermarkSharp } from '@mui/icons-material';
+import {
+  fetchFilters,
+  fetchProductsAsync,
+  productSelectors,
+} from './catalogSlice';
+import Loading from '../../app/layout/Loading';
 
 const Catalog = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -29,19 +38,47 @@ const Catalog = () => {
     { value: '高い順', label: '高い順' },
     { value: '低い順', label: '低い順' },
   ];
+  const [sort] = useState<string>('high-price');
+  const [search] = useState<string>('セーター');
+  const [page] = useState<number>(1);
+  const [pageSize] = useState<number>(10);
 
   console.log('sortOptions', sortOptions);
 
+  const productsRedux = useAppSelector(productSelectors.selectAll);
+  const { status, filtersLoaded, productsLoaded } = useAppSelector(
+    (state) => state.catalog
+  );
+  const dispatch = useAppDispatch();
+  // useEffect(() => {
+  //   if (!productsLoaded) dispatch(fetchProductsAsync());
+  //   if (!filtersLoaded) dispatch(fetchFilters());
+  // }, [productsLoaded, dispatch]);
+
+  useEffect(() => {
+    if (!productsLoaded) dispatch(fetchProductsAsync());
+  }, [productsLoaded, dispatch]);
+
+  useEffect(() => {
+    if (!filtersLoaded) dispatch(fetchFilters());
+  }, [dispatch, filtersLoaded]);
+
   useEffect(() => {
     try {
-      fetch('https://localhost:5000/api/products', { mode: 'cors' })
+      fetch(
+        `https://localhost:5000/api/products?sort=${sort}&search=${search}&page=${page}&pageSize=${pageSize}`,
+        { mode: 'cors' }
+      )
         .then((response) => response.json())
         .then((data) => setProducts(data));
     } catch (error) {
       console.error(error); // エラーが発生した行を特定するために、コンソールにエラーを出力する
     }
-  }, []);
+  }, [sort, search, page, pageSize]); // searchパラメーターを含めるため、依存リストにsearchを追加する
   console.log('products', products);
+
+  if (status.includes('pending'))
+    return <Loading message="Loading products..." />;
 
   return (
     <Grid container spacing={4} sx={{ mt: 3 }}>

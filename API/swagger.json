@@ -1,0 +1,11 @@
+﻿"sort": {
+    "type": "string",
+    "description": "Sort field",
+    "nullable": false,
+    "default": "default",
+    "enum": [
+      "default",
+      "high-price",
+      "low-price"
+    ]
+  }

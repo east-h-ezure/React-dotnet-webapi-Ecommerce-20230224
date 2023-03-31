@@ -351,6 +351,38 @@ namespace API.Controllers
                 });
             }
         }
+        [HttpGet("brand-types")]
+        public async Task<IActionResult> GetBrandAndTypes()
+        {
+            using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
+            await connection.OpenAsync();
+
+            try
+            {
+                using var transaction = await connection.BeginTransactionAsync();
+                var brands = await connection.QueryAsync<string>("SELECT DISTINCT Brand FROM Product", transaction: transaction);
+                var types = await connection.QueryAsync<string>("SELECT DISTINCT Type FROM Product", transaction: transaction);
+                await transaction.CommitAsync();
+
+                var result = new
+                {
+                    Brands = brands.ToList(),
+                    Types = types.ToList()
+                };
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ProblemDetails
+                {
+                    Title = "Problem getting brand and types",
+                    Detail = $"Error occurred while executing command: {ex.Message}"
+                });
+            }
+        }
+
+
+
 
 
         [HttpGet("{productId}")]
