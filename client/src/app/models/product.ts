@@ -10,3 +10,12 @@ export interface Product {
   quantityInStock: number;
   //publisher: string;
 }
+
+export interface ProductParams {
+  sort: string;
+  search?: string;
+  types: string[];
+  brands: string[];
+  page: number;
+  pageSize: number;
+}

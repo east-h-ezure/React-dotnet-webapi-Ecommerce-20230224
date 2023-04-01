@@ -1,4 +1,4 @@
-import { Product } from '../../app/models/product';
+import { Product, ProductParams } from '../../app/models/product';
 import {
   Box,
   Button,
@@ -35,14 +35,18 @@ const Catalog = () => {
   const [brandTypes, setBrandTypes] = useState({ brands: [], types: [] });
   // const {productLoaded, status, filterLoaded, brands, types} = useAppSelector(state => state.catalog);
   const sortOptions = [
-    { value: 'name', label: 'アルファベット順' },
-    { value: '高い順', label: '高い順' },
-    { value: '低い順', label: '低い順' },
+    { value: '', label: 'アルファベット順' },
+    { value: 'price_desc', label: '高い順' },
+    { value: 'price_asc', label: '低い順' },
   ];
-  const [sort] = useState<string>('high-price');
-  const [search] = useState<string>('セーター');
+  const [sort, setSort] = useState<string>('price_desc');
+  const [search] = useState<string>('シャツ');
   const [page] = useState<number>(1);
   const [pageSize] = useState<number>(10);
+
+  const handleSortChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSort(event.target.value);
+  };
 
   console.log('sortOptions', sortOptions);
 
@@ -102,7 +106,7 @@ const Catalog = () => {
         <Paper sx={{ mb: 2, p: 2 }}>
           <FormControl>
             <FormLabel id="demo-radio-buttons-group-label">価格</FormLabel>
-            <RadioGroup>
+            <RadioGroup value={sort} onChange={handleSortChange}>
               {sortOptions.map((sort) => (
                 <div>
                   <FormControlLabel
