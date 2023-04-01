@@ -292,7 +292,7 @@ namespace API.Controllers
                     if (hasSearchTerm)
                     {
                         query.Append(" Name LIKE @SearchTerm");
-                        parameters.Add("@SearchTerm", $"%{search}%");
+                    parameters.Add("@SearchTerm", $"%{search}%");
                     }
 
                     if (hasBrand)

@@ -40,14 +40,16 @@ const Catalog = () => {
     { value: 'price_asc', label: '低い順' },
   ];
   const [sort, setSort] = useState<string>('price_desc');
-  const [search] = useState<string>('シャツ');
+  const [search, setSearch] = useState<string>('シャツ');
   const [page] = useState<number>(1);
   const [pageSize] = useState<number>(10);
 
   const handleSortChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSort(event.target.value);
   };
-
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.target.value);
+  };
   console.log('sortOptions', sortOptions);
 
   const productsRedux = useAppSelector(productSelectors.selectAll);
@@ -101,7 +103,13 @@ const Catalog = () => {
     <Grid container spacing={4} sx={{ mt: 3 }}>
       <Grid item xs={3}>
         <Paper sx={{ mb: 2 }}>
-          <TextField label="商品を検索" variant="outlined" fullWidth />
+          <TextField
+            label="商品を検索"
+            variant="outlined"
+            fullWidth
+            value={search}
+            onChange={handleSearchChange}
+          />
         </Paper>
         <Paper sx={{ mb: 2, p: 2 }}>
           <FormControl>
