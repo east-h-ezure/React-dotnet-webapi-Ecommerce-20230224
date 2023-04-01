@@ -41,14 +41,21 @@ const Catalog = () => {
   ];
   const [sort, setSort] = useState<string>('price_desc');
   const [search, setSearch] = useState<string>('シャツ');
-  const [page] = useState<number>(1);
-  const [pageSize] = useState<number>(10);
+  const [page, setPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(10);
 
   const handleSortChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSort(event.target.value);
   };
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
+  };
+
+  const handlePaginationChange = (
+    event: React.ChangeEvent<unknown>,
+    page: number
+  ) => {
+    setPage(page);
   };
   console.log('sortOptions', sortOptions);
 
@@ -153,7 +160,13 @@ const Catalog = () => {
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Typography>1-6 of 20 items</Typography>
           <Stack spacing={2}>
-            <Pagination size="large" count={10} />
+            <Pagination
+              size="large"
+              count={10}
+              onChange={handlePaginationChange}
+              page={page}
+              // pageSize={pageSize}
+            />
             <Pagination count={10} color="primary" size="large" />
           </Stack>
         </Box>
