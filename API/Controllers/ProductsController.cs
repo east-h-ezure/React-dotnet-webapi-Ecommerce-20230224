@@ -384,7 +384,7 @@ namespace API.Controllers
 
 
 
-
+        //修正前
         [HttpGet("{productId}")]
         public async Task<ActionResult<Product>> GetProduct(int productId)
         {
@@ -395,6 +395,18 @@ namespace API.Controllers
                 );
             return Ok(product);
         }
+        //テスト
+        //[HttpGet("{productId}")]
+        //public async Task<ActionResult<IEnumerable<Product>>> GetProduct(int productId)
+        //{
+        //    using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
+        //    var products = await connection.QueryAsync<Product>(
+        //        "SELECT * FROM Product WHERE id = @Id",
+        //        new { Id = productId }
+        //        );
+        //    return Ok(products.ToList());
+        //}
+
 
         [HttpPost]
         public async Task<ActionResult<Product>> CreateProduct(Product product)

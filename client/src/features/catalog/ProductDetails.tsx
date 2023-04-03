@@ -47,27 +47,27 @@ const StledIconButton = styled(IconButton)({
 const ProductDetails = () => {
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<Product | null>(null);
+
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(0);
   const [basketItem, setBasketItem] = useState<BasketItem[]>([]);
-  const [basketId, setBasketId] = useState<string>(
-    'AFACBFAC-A1EC-4754-B349-1DDA2B98FB21'
-  );
+  const [basketId, setBasketId] = useState<string>('1');
   const [submitting, setSubmitting] = useState(false);
+  const [productId] = useState<number>();
 
   //basketitemのget
-  const fetchProducts = async () => {
-    const response = await axios.get(
-      `https://localhost:5000/api/Product?basketId=${basketId}`
-    );
-    setProduct(response.data);
-    setLoading(false);
-  };
+  // const fetchProducts = async () => {
+  //   const response = await axios.get(
+  //     `https://localhost:5000/api/Products/${id}`
+  //   );
+  //   setProduct(response.data);
+  //   setLoading(false);
+  // };
 
   // 初回レンダリング時に一度だけ実行
-  useEffect(() => {
-    fetchProducts();
-  }, [basketId]);
+  // useEffect(() => {
+  //   fetchProducts();
+  // }, [id]);
   // const item = basketItem?.find((i) => i.product.id === product?.id);
   // useEffect(() => {
   //   if (item) setQuantity(item.quantity);
@@ -79,18 +79,33 @@ const ProductDetails = () => {
     }
   };
 
+  // useEffect(() => {
+  //   // if (item) setQuantity(item?.quantity);
+  //   axios
+  //     .get(`https://localhost:5000/api/products/${id}`)
+  //     .then((res) => setProduct(res.data))
+  //     .catch((error) => console.log(error))
+  //     .finally(() => setLoading(false));
+  // }, [id]);
   useEffect(() => {
-    // if (item) setQuantity(item?.quantity);
-    axios
-      .get(`https://localhost:5000/api/products/${id}`)
-      .then((res) => setProduct(res.data))
-      .catch((error) => console.log(error))
-      .finally(() => setLoading(false));
+    try {
+      fetch(`https://localhost:5000/api/products/${id}`, { mode: 'cors' })
+        .then((response) => response.json())
+        .then((data) => {
+          setProduct(data);
+          setLoading(false); // データ取得後にローディングを非表示にする
+        });
+    } catch (error) {
+      console.error(error); // エラーが発生した行を特定するために、コンソールにエラーを出力する
+    }
   }, [id]);
+  console.log('id', id);
+  console.log('productId', productId);
+
   console.log('product', product);
 
   if (loading) return <h3>Loading...</h3>;
-  if (!product) return <h3>商品が見つかりません</h3>;
+  if (product == null) return <h3>商品が見つかりません</h3>;
 
   console.log('quantity', quantity);
   console.log('basketItem', basketItem);
@@ -140,110 +155,112 @@ const ProductDetails = () => {
   // };
 
   return (
-    <div>
-      <Grid container spacing={6} sx={{ mt: 0.5 }}>
-        <Grid item xs={4}>
-          <Box display="flex" alignItems="right">
+    // <Grid container sx={{ mt: 3 }}>
+    //   <div>{product.name}</div>
+    // </Grid>
+    <Grid container spacing={6} sx={{ mt: 0.5 }}>
+      <Grid item xs={4}>
+        {/* <Box display="flex" alignItems="right">
+          <img
+            src={product.pictureUrl}
+            // src="images/products/snow-coat.jpg"
+            alt={product.name}
+            // style={{ width: '100%', position: 'relative' }}
+          />
+        </Box> */}
+        <ImageList
+          sx={{ width: 500, height: 450 }}
+          variant="quilted"
+          cols={4}
+          rowHeight={121}
+        >
+          <ImageListItem key={product.pictureUrl} cols={1} rows={1}>
             <img
+              // {...srcset(product.pictureUrl, 121, 1, 1)}
               src={product.pictureUrl}
-              // src="images/products/snow-coat.jpg"
               alt={product.name}
-              // style={{ width: '100%', position: 'relative' }}
+              loading="lazy"
             />
-          </Box>
-          <ImageList
-            sx={{ width: 500, height: 450 }}
-            variant="quilted"
-            cols={4}
-            rowHeight={121}
-          >
-            <ImageListItem key={product.pictureUrl} cols={1} rows={1}>
-              <img
-                // {...srcset(product.pictureUrl, 121, 1, 1)}
-                src={product.pictureUrl}
-                alt={product.name}
-                loading="lazy"
-              />
-            </ImageListItem>
-          </ImageList>
-          <StledIconButton aria-label="like">
-            <Favorite fontSize="large" />
-          </StledIconButton>
-        </Grid>
-        <Grid item xs={7}>
-          <Typography variant="h3">{product.name}</Typography>
-          <Divider sx={{ mb: 2 }} />
-          <Typography gutterBottom color="red" variant="h4" sx={{ mb: 2 }}>
-            {product.price.toLocaleString('ja-JP', {
-              style: 'currency',
-              currency: 'JPY',
-            })}
-          </Typography>
-          <TableContainer sx={{ width: '100%' }}>
-            <TableBody>
-              <StypledTableRow>
-                <TableCell>
-                  <StyledTypography fontWeight="fontWeightBold">
-                    カテゴリー
-                  </StyledTypography>
-                </TableCell>
-                <TableCell>
-                  <StyledTypography>{product.type}</StyledTypography>
-                </TableCell>
-              </StypledTableRow>
-              <TableRow>
-                <TableCell>
-                  <StyledTypography fontWeight="fontWeightBold">
-                    ブランド
-                  </StyledTypography>
-                </TableCell>
-                <TableCell>
-                  <StyledTypography>{product.brand}</StyledTypography>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>
-                  <StyledTypography fontWeight="fontWeightBold">
-                    在庫数
-                  </StyledTypography>
-                </TableCell>
-                <TableCell>
-                  <StyledTypography>{product.quantityInStock}</StyledTypography>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </TableContainer>
+          </ImageListItem>
+        </ImageList>
+        <StledIconButton aria-label="like">
+          <Favorite fontSize="large" />
+        </StledIconButton>
+      </Grid>
+      <Grid item xs={7}>
+        <Typography variant="h3">{product.name}</Typography>
+        <Divider sx={{ mb: 2 }} />
+        <Typography gutterBottom color="red" variant="h4" sx={{ mb: 2 }}>
+          {product.price.toLocaleString('ja-JP', {
+            style: 'currency',
+            currency: 'JPY',
+          })}
+        </Typography>
+        <TableContainer sx={{ width: '100%' }}>
+          <TableBody>
+            <StypledTableRow>
+              <TableCell>
+                <StyledTypography fontWeight="fontWeightBold">
+                  カテゴリー
+                </StyledTypography>
+              </TableCell>
+              <TableCell>
+                <StyledTypography>{product.type}</StyledTypography>
+              </TableCell>
+            </StypledTableRow>
+            <TableRow>
+              <TableCell>
+                <StyledTypography fontWeight="fontWeightBold">
+                  ブランド
+                </StyledTypography>
+              </TableCell>
+              <TableCell>
+                <StyledTypography>{product.brand}</StyledTypography>
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>
+                <StyledTypography fontWeight="fontWeightBold">
+                  在庫数
+                </StyledTypography>
+              </TableCell>
+              <TableCell>
+                <StyledTypography>{product.quantityInStock}</StyledTypography>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </TableContainer>
 
-          <Divider />
-          <Typography
-            variant="h6"
-            fontWeight="fontWeightBold"
-            sx={{ mt: 2, mb: 2 }}
-          >
-            商品について
-          </Typography>
-          <Typography variant="subtitle1">{product.description}</Typography>
-          <Grid
-            sx={{
-              display: 'flex',
-              mt: 4,
-              mb: 2,
-              justifyContent: 'flex-start',
-            }}
-            container
-          >
-            <Grid item xs={4}>
-              <Typography variant="h6" fontWeight="fontWeightBold">
-                金額:
-                {product.price * quantity}円
-              </Typography>
-            </Grid>
-            {/* {basketItem.map((item) => {
+        <Divider />
+        <Typography
+          variant="h6"
+          fontWeight="fontWeightBold"
+          sx={{ mt: 2, mb: 2 }}
+        >
+          商品について
+        </Typography>
+        <Typography variant="subtitle1">{product.description}</Typography>
+        <Grid
+          sx={{
+            display: 'flex',
+            mt: 4,
+            mb: 2,
+            justifyContent: 'flex-start',
+          }}
+          container
+        >
+          <Grid item xs={4}>
+            <Typography variant="h6" fontWeight="fontWeightBold">
+              金額:
+              {product.price * quantity}円
+            </Typography>
+          </Grid>
+          {/* {basketItem.map((item) => {
               if (item.product.id === product.id) {
                 return (
                   <Grid item xs={4}>
                     {/* onClick={() => setQuantity(quantity + 1)} */}
-            {/* <TextField
+          {/* <TextField
                       onChange={handleInputChage}
                       variant="outlined"
                       type="number"
@@ -279,15 +296,15 @@ const ProductDetails = () => {
                       </Button>
                     </LoadingButton>
                   </Grid> */}
-            {/*  );
+          {/*  );
               } else {
                 return null;
               }
             })} */}
-          </Grid>
         </Grid>
       </Grid>
-    </div>
+    </Grid>
+    //  )}
   );
 };
 
