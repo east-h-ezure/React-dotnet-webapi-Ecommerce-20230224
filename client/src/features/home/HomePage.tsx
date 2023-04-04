@@ -17,6 +17,8 @@ const HomePage = () => {
     //   <Container>
     <div>
       <Typography>ホーム</Typography>
+      {/* TODO: ここにカテゴリー別のメニューを表示する */}
+      <div>ここにカテゴリー別のメニューを表示する</div>
     </div>
     //   </Container>
     // </ThemeProvider>

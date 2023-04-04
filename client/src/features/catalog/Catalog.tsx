@@ -90,6 +90,8 @@ const Catalog = () => {
     }
   }, [sort, search, page, pageSize]); // searchパラメーターを含めるため、依存リストにsearchを追加する
   console.log('products', products);
+  console.log('productsCount', products.length);
+  console.log('paginationCount', Math.floor(products.length / 10) + 1);
 
   useEffect(() => {
     try {
@@ -162,6 +164,7 @@ const Catalog = () => {
           <Stack spacing={2}>
             <Pagination
               size="large"
+              //ここが変わってくる
               count={10}
               onChange={handlePaginationChange}
               page={page}

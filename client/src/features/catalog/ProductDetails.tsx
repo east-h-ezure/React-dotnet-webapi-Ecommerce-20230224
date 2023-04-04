@@ -160,16 +160,16 @@ const ProductDetails = () => {
     // </Grid>
     <Grid container spacing={6} sx={{ mt: 0.5 }}>
       <Grid item xs={4}>
-        {/* <Box display="flex" alignItems="right">
+        <Box display="flex" alignItems="right">
           <img
             src={product.pictureUrl}
             // src="images/products/snow-coat.jpg"
             alt={product.name}
-            // style={{ width: '100%', position: 'relative' }}
+            style={{ width: '100%', position: 'relative', height: '100%' }}
           />
-        </Box> */}
-        <ImageList
-          sx={{ width: 500, height: 450 }}
+        </Box>
+        {/* <ImageList
+          sx={{ width: 400, height: 450 }}
           variant="quilted"
           cols={4}
           rowHeight={121}
@@ -182,7 +182,7 @@ const ProductDetails = () => {
               loading="lazy"
             />
           </ImageListItem>
-        </ImageList>
+        </ImageList> */}
         <StledIconButton aria-label="like">
           <Favorite fontSize="large" />
         </StledIconButton>
