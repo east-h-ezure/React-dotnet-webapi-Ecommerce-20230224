@@ -30,6 +30,7 @@ import {
 } from './catalogSlice';
 import Loading from '../../app/layout/Loading';
 
+// hoge
 const Catalog = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [brandTypes, setBrandTypes] = useState({ brands: [], types: [] });
