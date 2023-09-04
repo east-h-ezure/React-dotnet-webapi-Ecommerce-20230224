@@ -1,6 +1,6 @@
 ﻿namespace API.Models
 {
-    public class Register
+    public class Register: Login
     {
         public string Email { get; set; }
     }
